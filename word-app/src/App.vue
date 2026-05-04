@@ -59,25 +59,34 @@ function getAudioUrl(word) {
 function playPronunciation(word, index) {
   playingIndex.value = index;
   
-  const audio = new Audio();
-  audio.src = getAudioUrl(word.en);
+  const wordParts = word.en.split('_');
   
-  audio.onended = () => {
+  async function playParts() {
+    for (let i = 0; i < wordParts.length; i++) {
+      const part = wordParts[i];
+      const audio = new Audio();
+      audio.src = getAudioUrl(part);
+      
+      await new Promise((resolve) => {
+        audio.onended = resolve;
+        audio.onerror = resolve;
+        audio.play().catch(resolve);
+        
+        setTimeout(() => resolve(), 2000);
+      });
+      
+      if (i < wordParts.length - 1) {
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
     playingIndex.value = -1;
-  };
+  }
   
-  audio.onerror = () => {
-    playingIndex.value = -1;
-    console.error(`Failed to load audio: ${word.en}`);
-  };
-  
-  audio.play().catch(() => {
-    playingIndex.value = -1;
-  });
+  playParts();
   
   setTimeout(() => {
     playingIndex.value = -1;
-  }, 1500);
+  }, 2000 * wordParts.length + 500);
 }
 
 function handleTouchStart(e) {
