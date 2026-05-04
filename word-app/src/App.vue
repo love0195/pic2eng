@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { vocabularyData } from './data/vocabulary';
 
 const currentCategory = ref('furniture');
@@ -8,25 +8,26 @@ const playingIndex = ref(-1);
 const categoryKeys = Object.keys(vocabularyData);
 
 function getImageUrl(word) {
-  const prompt = encodeURIComponent(`a cute cartoon ${word}, simple style, white background, single object`);
-  return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${prompt}&image_size=square`;
+  return `/images/${word}.png`;
+}
+
+function getAudioUrl(word) {
+  return `/audio/${word}.mp3`;
 }
 
 function playPronunciation(word, index) {
   playingIndex.value = index;
   
   const audio = new Audio();
-  audio.src = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`;
+  audio.src = getAudioUrl(word);
   
   audio.onended = () => {
     playingIndex.value = -1;
   };
   
   audio.onerror = () => {
-    audio.src = `https://api.dictionaryapi.dev/media/pronunciations/en/${encodeURIComponent(word)}-us.mp3`;
-    audio.play().catch(() => {
-      playingIndex.value = -1;
-    });
+    playingIndex.value = -1;
+    console.error(`Failed to load audio: ${word}`);
   };
   
   audio.play().catch(() => {
@@ -42,12 +43,6 @@ function switchCategory(category) {
   currentCategory.value = category;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-const category = ref(null);
-
-onMounted(() => {
-  category.value = vocabularyData[currentCategory.value];
-});
 </script>
 
 <template>
