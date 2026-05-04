@@ -1,0 +1,10 @@
+{
+  "face": [
+    {
+      "prompt": "cute cartoon human face, simple flat design, white background, kawaii style, clean lines, educational illustration",
+      "url": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cute%20cartoon%20human%20face%2C%20simple%20flat%20design%2C%20white%20background%2C%20kawaii%20style%2C%20clean%20lines%2C%20educational%20illustration&image_size=square&session_id=cartoon_face_1777902288602",
+      "timestamp": 1777902288.6025684,
+      "attempt": 1
+    }
+  ]
+}
