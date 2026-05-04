@@ -68,9 +68,11 @@ export const vocabularyData = {
       { en: 'elephant', zh: '大象' },
       { en: 'monkey', zh: '猴子' },
       { en: 'panda', zh: '熊猫' },
-      { en: 'bear', zh: '熊' },
-      { en: 'wolf', zh: '狼' },
-      { en: 'deer', zh: '鹿' }
+      { en: 'fox', zh: '狐狸' },
+      { en: 'giraffe', zh: '长颈鹿' },
+      { en: 'zebra', zh: '斑马' },
+      { en: 'kangaroo', zh: '袋鼠' },
+      { en: 'koala', zh: '考拉' }
     ]
   },
   fruits: {
@@ -106,19 +108,6 @@ export const vocabularyData = {
       { en: 'seahorse', zh: '海马' }
     ]
   },
-  mammals: {
-    name: '哺乳动物',
-    icon: '🦁',
-    words: [
-      { en: 'lion', zh: '狮子' },
-      { en: 'tiger', zh: '老虎' },
-      { en: 'fox', zh: '狐狸' },
-      { en: 'giraffe', zh: '长颈鹿' },
-      { en: 'zebra', zh: '斑马' },
-      { en: 'kangaroo', zh: '袋鼠' },
-      { en: 'koala', zh: '考拉' }
-    ]
-  },
   plants: {
     name: '植物篇',
     icon: '🌸',
@@ -131,8 +120,7 @@ export const vocabularyData = {
       { en: 'tree', zh: '树' },
       { en: 'grass', zh: '草' },
       { en: 'leaf', zh: '叶子' },
-      { en: 'mushroom', zh: '蘑菇' },
-      { en: 'bamboo', zh: '竹子' }
+      { en: 'mushroom', zh: '蘑菇' }
     ]
   },
   indoor: {
@@ -145,10 +133,7 @@ export const vocabularyData = {
       { en: 'living_room', zh: '客厅' },
       { en: 'door', zh: '门' },
       { en: 'window', zh: '窗户' },
-      { en: 'wall', zh: '墙壁' },
-      { en: 'floor', zh: '地板' },
-      { en: 'ceiling', zh: '天花板' },
-      { en: 'stairs', zh: '楼梯' }
+      { en: 'wall', zh: '墙壁' }
     ]
   },
   buildings: {
@@ -158,49 +143,9 @@ export const vocabularyData = {
       { en: 'school', zh: '学校' },
       { en: 'hospital', zh: '医院' },
       { en: 'library', zh: '图书馆' },
-      { en: 'church', zh: '教堂' },
       { en: 'tower', zh: '塔' },
-      { en: 'castle', zh: '城堡' },
-      { en: 'palace', zh: '宫殿' },
-      { en: 'stadium', zh: '体育场' },
-      { en: 'museum', zh: '博物馆' },
-      { en: 'theater', zh: '剧院' }
-    ]
-  },
-  body: {
-    name: '人体结构',
-    icon: '👤',
-    words: [
-      { en: 'head', zh: '头' },
-      { en: 'brain', zh: '大脑' },
-      { en: 'face', zh: '脸' },
-      { en: 'forehead', zh: '额头' },
-      { en: 'eyebrow', zh: '眉毛' },
-      { en: 'eye', zh: '眼睛' },
-      { en: 'ear', zh: '耳朵' },
-      { en: 'nose', zh: '鼻子' },
-      { en: 'mouth', zh: '嘴巴' },
-      { en: 'lip', zh: '嘴唇' },
-      { en: 'tooth', zh: '牙齿' },
-      { en: 'cheek', zh: '脸颊' },
-      { en: 'chin', zh: '下巴' },
-      { en: 'neck', zh: '脖子' },
-      { en: 'shoulder', zh: '肩膀' },
-      { en: 'arm', zh: '手臂' },
-      { en: 'elbow', zh: '手肘' },
-      { en: 'hand', zh: '手' },
-      { en: 'finger', zh: '手指' },
-      { en: 'heart', zh: '心脏' },
-      { en: 'lung', zh: '肺' },
-      { en: 'liver', zh: '肝脏' },
-      { en: 'stomach', zh: '胃' },
-      { en: 'intestine', zh: '肠' },
-      { en: 'kidney', zh: '肾脏' },
-      { en: 'muscle', zh: '肌肉' },
-      { en: 'skin', zh: '皮肤' },
-      { en: 'leg', zh: '腿' },
-      { en: 'knee', zh: '膝盖' },
-      { en: 'foot', zh: '脚' }
+      { en: 'ship', zh: '轮船' },
+      { en: 'helicopter', zh: '直升机' }
     ]
   }
 };
