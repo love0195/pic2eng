@@ -8,7 +8,7 @@ const playingIndex = ref(-1);
 const categoryKeys = Object.keys(vocabularyData);
 
 function getImageUrl(word) {
-  return `/images/${word}.png`;
+  return `/images/${word}.svg`;
 }
 
 function getAudioUrl(word) {
