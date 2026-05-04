@@ -129,5 +129,28 @@ export const vocabularyData = {
       { en: 'leaf', zh: '叶子' },
       { en: 'mushroom', zh: '蘑菇' }
     ]
+  },
+  indoor: {
+    name: '室内空间',
+    icon: '🏠',
+    words: [
+      { en: 'kitchen', zh: '厨房' },
+      { en: 'bedroom', zh: '卧室' },
+      { en: 'bathroom', zh: '浴室' },
+      { en: 'living room', zh: '客厅' },
+      { en: 'door', zh: '门' },
+      { en: 'window', zh: '窗户' },
+      { en: 'wall', zh: '墙壁' }
+    ]
+  },
+  buildings: {
+    name: '公共建筑',
+    icon: '🏛️',
+    words: [
+      { en: 'school', zh: '学校' },
+      { en: 'hospital', zh: '医院' },
+      { en: 'library', zh: '图书馆' },
+      { en: 'tower', zh: '塔' }
+    ]
   }
 };
