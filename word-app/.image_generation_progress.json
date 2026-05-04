@@ -223,7 +223,8 @@
     "dice",
     "teddy_bear",
     "sandbox",
-    "i_am_ready"
+    "i_am_sick",
+    "alone"
   ],
   "failed": [
     "dressing_table",
@@ -1591,15 +1592,14 @@
     "i_am_tired",
     "i_am_hungry",
     "i_am_thirsty",
-    "i_am_sick",
+    "i_am_ready",
     "wait_a_minute",
-    "in_a_minute",
-    "later",
-    "right_now",
-    "asap",
     "just_a_moment",
+    "in_a_minute",
+    "right_now",
+    "later",
+    "asap",
     "together",
-    "alone",
     "again"
   ]
 }
