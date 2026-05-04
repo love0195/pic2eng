@@ -4,6 +4,8 @@ import time
 import json
 import urllib.request
 import urllib.parse
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 IMAGE_DIR = "public/images"
 PROGRESS_FILE = ".image_generation_progress.json"
@@ -45,7 +47,7 @@ def download_image(word):
     if os.path.exists(filepath):
         size = os.path.getsize(filepath)
         if size > 10000:
-            return True, "exists"
+            return word, True, "exists"
     
     url = generate_image_url(word)
     
@@ -55,20 +57,20 @@ def download_image(word):
         }
         req = urllib.request.Request(url, headers=headers)
         
-        with urllib.request.urlopen(req, timeout=60) as response:
+        with urllib.request.urlopen(req, timeout=45) as response:
             data = response.read()
             
             if len(data) > 10000:
                 with open(filepath, 'wb') as f:
                     f.write(data)
-                return True, f"downloaded ({len(data)} bytes)"
+                return word, True, f"downloaded ({len(data)} bytes)"
             else:
-                return False, f"too small ({len(data)} bytes)"
+                return word, False, f"too small ({len(data)} bytes)"
                 
     except Exception as e:
-        return False, str(e)
+        return word, False, str(e)
 
-def batch_generate(batch_size=50, max_retries=3):
+def batch_generate(batch_size=80, max_workers=10):
     words = get_vocabulary_words()
     progress = load_progress()
     
@@ -84,32 +86,33 @@ def batch_generate(batch_size=50, max_retries=3):
     print(f"📊 进度: {completed}/{total} 完成 ({completed/total*100:.1f}%)")
     print(f"剩余: {remaining} 张图片")
     print(f"批量大小: {batch_size} 张/批")
+    print(f"并行: {max_workers} 个线程")
     print(f"{'='*60}")
     
     batch_words = to_process[:batch_size]
     success_count = 0
     fail_count = 0
+    lock = threading.Lock()
     
     print(f"\n开始处理批次 ({len(batch_words)} 张)...\n")
     
-    for idx, word in enumerate(batch_words, 1):
-        print(f"[{idx}/{len(batch_words)}] {word}... ", end='', flush=True)
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(download_image, word): word for word in batch_words}
         
-        ok, status = download_image(word)
-        
-        if ok:
-            print(f"✅ {status}")
-            progress["processed"].append(word)
-            success_count += 1
-        else:
-            print(f"❌ {status}")
-            progress["failed"].append(word)
-            fail_count += 1
-        
-        save_progress(progress)
-        
-        if idx < len(batch_words):
-            time.sleep(0.8)
+        for idx, future in enumerate(as_completed(futures), 1):
+            word, ok, status = future.result()
+            
+            with lock:
+                if ok:
+                    print(f"[{idx}/{len(batch_words)}] {word}... ✅ {status}")
+                    progress["processed"].append(word)
+                    success_count += 1
+                else:
+                    print(f"[{idx}/{len(batch_words)}] {word}... ❌ {status}")
+                    progress["failed"].append(word)
+                    fail_count += 1
+                
+                save_progress(progress)
     
     print(f"\n{'='*60}")
     print(f"📦 批次完成!")
@@ -120,10 +123,16 @@ def batch_generate(batch_size=50, max_retries=3):
 
 if __name__ == "__main__":
     import sys
-    batch_size = 50
+    batch_size = 80
+    max_workers = 10
     if len(sys.argv) > 1:
         try:
             batch_size = int(sys.argv[1])
         except ValueError:
             pass
-    batch_generate(batch_size=batch_size)
+        if len(sys.argv) > 2:
+            try:
+                max_workers = int(sys.argv[2])
+            except ValueError:
+                pass
+    batch_generate(batch_size=batch_size, max_workers=max_workers)

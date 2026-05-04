@@ -85,7 +85,11 @@
     "ring",
     "necklace",
     "earrings",
-    "suit"
+    "suit",
+    "pajamas",
+    "toothpaste",
+    "soap",
+    "shampoo"
   ],
   "failed": [
     "dressing_table",
@@ -121,6 +125,20 @@
     "wallet",
     "bracelet",
     "hoodie",
-    "jeans"
+    "jeans",
+    "toothbrush",
+    "conditioner",
+    "shower",
+    "bathtub",
+    "towel",
+    "toilet",
+    "sink",
+    "comb",
+    "razor",
+    "floss",
+    "mouthwash",
+    "lotion",
+    "sunscreen",
+    "makeup"
   ]
 }
