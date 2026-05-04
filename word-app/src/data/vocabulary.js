@@ -147,5 +147,52 @@ export const vocabularyData = {
       { en: 'ship', zh: '轮船' },
       { en: 'helicopter', zh: '直升机' }
     ]
+  },
+  face: {
+    name: '面部五官',
+    icon: '👤',
+    words: [
+      { en: 'face', zh: '脸' },
+      { en: 'forehead', zh: '额头' },
+      { en: 'eye', zh: '眼睛' },
+      { en: 'eyebrow', zh: '眉毛' },
+      { en: 'ear', zh: '耳朵' },
+      { en: 'nose', zh: '鼻子' },
+      { en: 'cheek', zh: '脸颊' },
+      { en: 'mouth', zh: '嘴' },
+      { en: 'lip', zh: '嘴唇' },
+      { en: 'chin', zh: '下巴' }
+    ]
+  },
+  body: {
+    name: '身体部位',
+    icon: '🦵',
+    words: [
+      { en: 'head', zh: '头' },
+      { en: 'neck', zh: '脖子' },
+      { en: 'shoulder', zh: '肩膀' },
+      { en: 'arm', zh: '手臂' },
+      { en: 'elbow', zh: '肘' },
+      { en: 'hand', zh: '手' },
+      { en: 'finger', zh: '手指' },
+      { en: 'leg', zh: '腿' },
+      { en: 'knee', zh: '膝盖' },
+      { en: 'foot', zh: '脚' },
+      { en: 'skin', zh: '皮肤' }
+    ]
+  },
+  organs: {
+    name: '内脏器官',
+    icon: '❤️',
+    words: [
+      { en: 'brain', zh: '大脑' },
+      { en: 'heart', zh: '心脏' },
+      { en: 'lung', zh: '肺' },
+      { en: 'liver', zh: '肝脏' },
+      { en: 'stomach', zh: '胃' },
+      { en: 'intestine', zh: '肠' },
+      { en: 'kidney', zh: '肾脏' },
+      { en: 'muscle', zh: '肌肉' }
+    ]
   }
 };
