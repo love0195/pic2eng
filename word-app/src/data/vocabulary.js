@@ -30,7 +30,6 @@ export const vocabularyData = {
       { en: 'airconditioner', zh: '空调' },
       { en: 'computer', zh: '电脑' },
       { en: 'fan', zh: '风扇' },
-      { en: 'heater', zh: '加热器' },
       { en: 'coffee', zh: '咖啡机' },
       { en: 'toaster', zh: '烤面包机' }
     ]
@@ -87,6 +86,48 @@ export const vocabularyData = {
       { en: 'pear', zh: '梨' },
       { en: 'lemon', zh: '柠檬' },
       { en: 'cherry', zh: '樱桃' }
+    ]
+  },
+  sea_animals: {
+    name: '海洋动物',
+    icon: '🐙',
+    words: [
+      { en: 'whale', zh: '鲸鱼' },
+      { en: 'dolphin', zh: '海豚' },
+      { en: 'shark', zh: '鲨鱼' },
+      { en: 'octopus', zh: '章鱼' },
+      { en: 'jellyfish', zh: '水母' },
+      { en: 'crab', zh: '螃蟹' },
+      { en: 'lobster', zh: '龙虾' },
+      { en: 'starfish', zh: '海星' }
+    ]
+  },
+  mammals: {
+    name: '哺乳动物',
+    icon: '🦁',
+    words: [
+      { en: 'lion', zh: '狮子' },
+      { en: 'tiger', zh: '老虎' },
+      { en: 'fox', zh: '狐狸' },
+      { en: 'giraffe', zh: '长颈鹿' },
+      { en: 'zebra', zh: '斑马' },
+      { en: 'kangaroo', zh: '袋鼠' },
+      { en: 'koala', zh: '考拉' }
+    ]
+  },
+  plants: {
+    name: '植物篇',
+    icon: '🌸',
+    words: [
+      { en: 'rose', zh: '玫瑰' },
+      { en: 'sunflower', zh: '向日葵' },
+      { en: 'tulip', zh: '郁金香' },
+      { en: 'daisy', zh: '雏菊' },
+      { en: 'tree', zh: '树' },
+      { en: 'flower', zh: '花' },
+      { en: 'grass', zh: '草' },
+      { en: 'leaf', zh: '叶子' },
+      { en: 'mushroom', zh: '蘑菇' }
     ]
   }
 };
