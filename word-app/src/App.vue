@@ -211,7 +211,7 @@ onUnmounted(() => {
           :key="word.en"
           class="word-card"
           :class="{ playing: playingIndex === index }"
-          @click="playPronunciation(word, index)"
+          @click.stop.prevent="playPronunciation(word, index)"
         >
           <div class="card-inner">
             <div class="image-wrapper">
