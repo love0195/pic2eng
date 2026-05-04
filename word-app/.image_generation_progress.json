@@ -1593,6 +1593,13 @@
     "i_am_ready",
     "wait_a_minute",
     "just_a_moment",
-    "in_a_minute"
+    "in_a_minute",
+    "right_now",
+    "later",
+    "together",
+    "asap",
+    "alone",
+    "again",
+    "how_far"
   ]
 }
