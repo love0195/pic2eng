@@ -1,0 +1,76 @@
+{
+  "face": [
+    {
+      "timestamp": 1777899519.6189764,
+      "result": {
+        "word": "face",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 1
+    },
+    {
+      "timestamp": 1777899714.806085,
+      "result": {
+        "word": "face",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 2
+    }
+  ],
+  "forehead": [
+    {
+      "timestamp": 1777899562.5709162,
+      "result": {
+        "word": "forehead",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 1
+    },
+    {
+      "timestamp": 1777899754.2847078,
+      "result": {
+        "word": "forehead",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 2
+    }
+  ],
+  "eye": [
+    {
+      "timestamp": 1777899793.6407034,
+      "result": {
+        "word": "eye",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 1
+    }
+  ],
+  "eyebrow": [
+    {
+      "timestamp": 1777899835.010641,
+      "result": {
+        "word": "eyebrow",
+        "success": false,
+        "sources": [],
+        "size": 0,
+        "downloaded_url": ""
+      },
+      "attempt": 1
+    }
+  ]
+}
