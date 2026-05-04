@@ -8,7 +8,7 @@
 ## 待处理词汇
 
 ### 面部五官 (face) - 10个词
-- [ ] face.jpg - 卡通脸 ⚠️ AI生成失败（返回占位图）
+- [x] face.jpg - 卡通脸 ❌ AI生成失败（等待5分钟仍是占位图，2026-05-04）
 - [ ] forehead.jpg - 额头
 - [ ] eye.jpg - 眼睛
 - [ ] eyebrow.jpg - 眉毛
