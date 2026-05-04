@@ -814,6 +814,26 @@
     "windpipe",
     "bronchus",
     "calf",
-    "gullet"
+    "gullet",
+    "cotton",
+    "injection",
+    "bandage",
+    "plaster",
+    "stethoscope",
+    "blood_pressure",
+    "thermometer",
+    "pulse",
+    "fever",
+    "cough",
+    "headache",
+    "stomachache",
+    "flu",
+    "allergy",
+    "nausea",
+    "dizziness",
+    "fatigue",
+    "pain",
+    "wound",
+    "bruise"
   ]
 }
