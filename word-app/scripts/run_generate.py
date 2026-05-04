@@ -103,14 +103,14 @@ def batch_generate(batch_size=30):
             print(f"✅ {status} ({elapsed:.1f}s)")
             progress["processed"].append(word)
             success += 1
-            wait = 0.2
+            wait = 0.5
         else:
             print(f"❌ {status}")
             progress["failed"].append(word)
             fail += 1
-            wait = 2.0
+            wait = 3.0
             if "429" in status:
-                wait = 3.0
+                wait = 5.0
         
         save_progress(progress)
         time.sleep(wait)
