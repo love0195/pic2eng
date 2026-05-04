@@ -8,11 +8,15 @@
 
 ## 当前状态（2026-05-04）
 
-### ✅ 检查结果：所有29张图片都是真实图片
+### ✅ 已有图片情况
 - **真实图片**: 29/29
 - **占位图**: 0/29
 - **缺失**: 0/29
 - **当前使用**: Dreamstime缩略图版本
+
+### 🔄 AI生成尝试情况
+- **2026-05-04 第二次尝试**: 所有29个链接返回占位图（176626 bytes）
+- **2026-05-04 第一次尝试**: 所有29个链接返回占位图（176626 bytes）
 
 ### 面部五官 (face) - 10个词
 - [x] face.jpg - 卡通脸 ✅ Dreamstime缩略图 (59530 bytes)
@@ -52,12 +56,19 @@
 ## 已完成
 - [x] 所有29张图片已从Dreamstime下载作为临时版本
 - [x] 应用已可以正常运行，所有词汇都有图片和音频
-- [x] 图片生成链接已保存到 `docs/image_generation_links.json`
+- [x] 图片生成链接已保存到 `docs/image_generation_links.json`（2次尝试记录）
 
 ## 相关脚本
 - `scripts/check_and_save_links.py` - 检查图片状态并生成/保存链接
 - `scripts/check_saved_links.py` - 检查之前保存的链接，看是否已生成好真实图片
-- `docs/image_generation_links.json` - 保存的图片生成链接记录
+- `scripts/retry_generate.py` - 重新尝试生成新图片的脚本
+- `docs/image_generation_links.json` - 保存的图片生成链接记录（包含多次尝试）
+
+## 下次检查
+以后想检查这些链接是否已生成好，直接运行：
+```bash
+cd /workspace/word-app && python3 scripts/check_saved_links.py
+```
 
 ## 更新记录
 - 2026-05-04: 初始创建，使用Dreamstime缩略图作为临时方案
@@ -65,3 +76,4 @@
 - 2026-05-04: 更新任务状态，所有29张人体相关图片已准备好（Dreamstime版本）
 - 2026-05-04: 创建脚本保存图片生成链接，下次可以尝试检查这些链接是否已生成好
 - 2026-05-04: 检查结果确认：所有29张图片都是真实图片（Dreamstime版本）
+- 2026-05-04: 第二次尝试生成AI图片，所有链接返回占位图，链接已保存到docs/image_generation_links.json
