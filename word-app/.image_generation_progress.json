@@ -947,7 +947,11 @@
     "indigo",
     "scarlet",
     "weekend",
-    "cyan"
+    "cyan",
+    "khaki",
+    "Memorial_Day",
+    "burgundy",
+    "sky_blue"
   ],
   "failed": [
     "moisturizer",
@@ -971,14 +975,10 @@
     "turquoise",
     "violet",
     "ivory",
-    "khaki",
-    "Memorial_Day",
     "schedule",
     "tan",
-    "burgundy",
     "magenta",
     "teal",
-    "sky_blue",
     "dark_green",
     "light_pink",
     "circle",
