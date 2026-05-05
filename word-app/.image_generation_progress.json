@@ -981,7 +981,8 @@
     "opaque",
     "crescent",
     "flexible",
-    "arrow"
+    "arrow",
+    "dull"
   ],
   "failed": [
     "moisturizer",
@@ -1013,7 +1014,6 @@
     "quarter",
     "smooth",
     "hard",
-    "dull",
     "soft",
     "rigid",
     "thick",
