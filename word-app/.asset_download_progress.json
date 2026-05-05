@@ -358,7 +358,25 @@
     "pear",
     "lemon",
     "kiwi",
-    "avocado"
+    "avocado",
+    "blueberry",
+    "raspberry",
+    "blackberry",
+    "plum",
+    "apricot",
+    "coconut",
+    "pomegranate",
+    "fig",
+    "grapefruit",
+    "melon",
+    "papaya",
+    "dragon_fruit",
+    "lychee",
+    "longan",
+    "durian",
+    "persimmon",
+    "tangerine",
+    "guava"
   ],
   "downloaded_audio": [
     "sofa",
@@ -672,7 +690,24 @@
     "pear",
     "lemon",
     "kiwi",
-    "avocado"
+    "avocado",
+    "blueberry",
+    "raspberry",
+    "blackberry",
+    "plum",
+    "apricot",
+    "coconut",
+    "pomegranate",
+    "fig",
+    "grapefruit",
+    "melon",
+    "papaya",
+    "lychee",
+    "longan",
+    "durian",
+    "persimmon",
+    "tangerine",
+    "guava"
   ],
   "failed_images": [
     "plain"
@@ -725,7 +760,8 @@
     "cherry_blossom",
     "maple_tree",
     "oak_tree",
-    "coconut_tree"
+    "coconut_tree",
+    "dragon_fruit"
   ],
   "current_group": 0
 }
