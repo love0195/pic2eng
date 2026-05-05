@@ -924,7 +924,8 @@
     "National_Day",
     "Mother_Day",
     "Father_Day",
-    "birthday"
+    "birthday",
+    "billion"
   ],
   "failed": [
     "moisturizer",
@@ -938,7 +939,6 @@
     "single",
     "lot",
     "Christmas",
-    "billion",
     "Dragon_Boat",
     "midnight",
     "Children_Day",
