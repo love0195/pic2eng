@@ -6,8 +6,6 @@ const currentGroup = ref(Object.keys(vocabularyData)[0]);
 const currentCategory = ref('');
 const playingIndex = ref(-1);
 const showMobileNav = ref(false);
-const touchStartX = ref(0);
-const touchEndX = ref(0);
 
 const groupKeys = computed(() => Object.keys(vocabularyData));
 
@@ -90,30 +88,7 @@ function playPronunciation(word, index) {
   }, 2000 * wordParts.length + 500);
 }
 
-function handleTouchStart(e) {
-  touchStartX.value = e.touches[0].clientX;
-}
 
-function handleTouchMove(e) {
-  touchEndX.value = e.touches[0].clientX;
-}
-
-function handleTouchEnd() {
-  const diff = touchStartX.value - touchEndX.value;
-  const threshold = 80;
-  
-  if (Math.abs(diff) > threshold) {
-    const currentIndex = groupKeys.value.indexOf(currentGroup.value);
-    if (diff > 0 && currentIndex < groupKeys.value.length - 1) {
-      switchGroup(groupKeys.value[currentIndex + 1]);
-    } else if (diff < 0 && currentIndex > 0) {
-      switchGroup(groupKeys.value[currentIndex - 1]);
-    }
-  }
-  
-  touchStartX.value = 0;
-  touchEndX.value = 0;
-}
 
 function handleKeyDown(e) {
   if (e.key === 'Escape') {
@@ -134,9 +109,6 @@ onUnmounted(() => {
 <template>
   <div 
     class="app-container"
-    @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
-    @touchend="handleTouchEnd"
   >
     <header class="app-header">
       <div class="header-content">
@@ -240,12 +212,7 @@ onUnmounted(() => {
       </div>
     </main>
 
-    <footer class="app-footer">
-      <div class="swipe-hint">
-        <span class="hint-icon">👆</span>
-        <span>左右滑动切换分类</span>
-      </div>
-    </footer>
+
   </div>
 </template>
 
@@ -555,7 +522,7 @@ onUnmounted(() => {
 }
 
 .main-content {
-  padding: 8px 12px 100px;
+  padding: 8px 12px 40px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -679,30 +646,6 @@ onUnmounted(() => {
   color: #909399;
 }
 
-.app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0) 0%, rgba(248, 250, 252, 0.95) 20%, rgba(248, 250, 252, 1) 100%);
-  pointer-events: none;
-}
-
-.swipe-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #c0c4cc;
-}
-
-.hint-icon {
-  font-size: 16px;
-}
-
 @media (min-width: 500px) {
   .word-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -716,10 +659,6 @@ onUnmounted(() => {
   .word-zh {
     font-size: 13px;
   }
-  
-  .app-footer {
-    display: none;
-  }
 }
 
 @media (min-width: 768px) {
@@ -729,7 +668,7 @@ onUnmounted(() => {
   }
   
   .main-content {
-    padding: 16px 24px 120px;
+    padding: 16px 24px 40px;
   }
   
   .nav-toggle {
