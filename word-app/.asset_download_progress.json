@@ -581,7 +581,23 @@
     "port",
     "parking_lot",
     "gas_station",
-    "traffic_light"
+    "traffic_light",
+    "stop_sign",
+    "crosswalk",
+    "sidewalk",
+    "street_lamp",
+    "fountain",
+    "statue",
+    "monument",
+    "clock_tower",
+    "castle",
+    "intersection",
+    "overpass",
+    "underpass",
+    "roundabout",
+    "pavement",
+    "speed_bump",
+    "toll_booth"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1078,7 +1094,18 @@
     "tunnel",
     "station",
     "airport",
-    "port"
+    "port",
+    "crosswalk",
+    "sidewalk",
+    "fountain",
+    "statue",
+    "monument",
+    "castle",
+    "intersection",
+    "overpass",
+    "underpass",
+    "roundabout",
+    "pavement"
   ],
   "failed_images": [
     "plain",
@@ -1173,7 +1200,12 @@
     "cargo_ship",
     "parking_lot",
     "gas_station",
-    "traffic_light"
+    "traffic_light",
+    "stop_sign",
+    "street_lamp",
+    "clock_tower",
+    "speed_bump",
+    "toll_booth"
   ],
   "current_group": 0
 }
