@@ -1,0 +1,39 @@
+{
+  "downloaded_images": [
+    "sofa",
+    "chair",
+    "table",
+    "bed",
+    "wardrobe",
+    "desk",
+    "bookshelf",
+    "cabinet",
+    "cupboard",
+    "drawer",
+    "lamp",
+    "stool",
+    "mirror",
+    "pillow",
+    "blanket"
+  ],
+  "downloaded_audio": [
+    "sofa",
+    "chair",
+    "table",
+    "bed",
+    "wardrobe",
+    "desk",
+    "bookshelf",
+    "cabinet",
+    "cupboard",
+    "drawer",
+    "lamp",
+    "stool",
+    "mirror",
+    "pillow",
+    "blanket"
+  ],
+  "failed_images": [],
+  "failed_audio": [],
+  "current_group": 0
+}
