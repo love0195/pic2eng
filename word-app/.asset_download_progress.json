@@ -964,7 +964,9 @@
     "cakes",
     "sign",
     "room",
-    "theme"
+    "theme",
+    "mother",
+    "teacher"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1918,7 +1920,11 @@
     "index",
     "middle",
     "little",
-    "pressure"
+    "pressure",
+    "new",
+    "teacher",
+    "sky",
+    "dark"
   ],
   "failed_images": [
     "plain",
@@ -2065,7 +2071,17 @@
     "index",
     "middle",
     "little",
-    "pressure"
+    "pressure",
+    "new",
+    "mid",
+    "lantern",
+    "labor",
+    "national",
+    "children",
+    "father",
+    "memorial",
+    "sky",
+    "dark"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -2225,7 +2241,15 @@
     "sky_blue",
     "light_pink",
     "dark_green",
-    "light_blue"
+    "light_blue",
+    "mid",
+    "lantern",
+    "labor",
+    "national",
+    "children",
+    "mother",
+    "father",
+    "memorial"
   ],
   "current_group": 0
 }
