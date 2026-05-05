@@ -242,19 +242,19 @@
     "shoes",
     "boots",
     "watch",
-    "wallet"
-  ],
-  "failed": [
+    "wallet",
     "shelving_unit",
     "router",
     "air_purifier",
-    "dehumidifier",
     "electric_blanket",
+    "ladle",
+    "apron"
+  ],
+  "failed": [
+    "dehumidifier",
     "electric_kettle",
     "spoon",
     "bottle",
-    "ladle",
-    "apron",
     "skirt",
     "cap",
     "gloves",
