@@ -77,7 +77,7 @@ def retry_failed(batch_size=100):
     
     if not failed_words:
         print("✅ No failed words to retry!")
-        return
+        return True
     
     # Remove words already in processed
     to_retry = [w for w in failed_words if w not in processed]
@@ -88,24 +88,26 @@ def retry_failed(batch_size=100):
     total_failed = len(failed_words)
     total_processed = len(processed)
     
-    print(f"{ '='*60}")
-    print(f"📊 Status:")
-    print(f"   - Total processed: {total_processed}")
-    print(f"   - Total failed: {total_failed}")
-    print(f"   - To retry now: {total_to_retry}")
-    print(f"   - Batch size: {batch_size}")
-    print(f"{ '='*60}")
+    print(f"\n{'='*70}")
+    print(f"📊 当前进度报告")
+    print(f"{'='*70}")
+    print(f"   ✅ 已处理单词: {total_processed}")
+    print(f"   ❌ 失败单词: {total_failed}")
+    print(f"   📥 待处理: {total_to_retry}")
+    print(f"   📦 当前批次: {batch_size}")
+    print(f"   🖼️  已下载图片: {len([f for f in os.listdir(IMAGE_DIR) if f.endswith('.jpg')])}")
+    print(f"{'='*70}\n")
     
     if total_to_retry == 0:
-        print("✅ All failed words either already processed or files exist!")
-        return
+        print("✅ 所有失败单词都已处理完毕或文件已存在！")
+        return True
     
     # Take first batch
     batch_words = to_retry[:batch_size]
     success_count = 0
     fail_count = 0
     
-    print(f"\n🔄 Retrying {len(batch_words)} words...\n")
+    print(f"🔄 正在处理第1批 ({len(batch_words)} 个单词)...\n")
     
     for idx, word in enumerate(batch_words, 1):
         print(f"[{idx}/{len(batch_words)}] {word}... ", end='', flush=True)
@@ -129,21 +131,50 @@ def retry_failed(batch_size=100):
         if idx < len(batch_words):
             time.sleep(2.0)
     
-    print(f"\n{ '='*60}")
-    print(f"📊 Batch complete!")
-    print(f"   - Success: {success_count}")
-    print(f"   - Still failed: {fail_count}")
-    print(f"   - Total images now: {len([f for f in os.listdir(IMAGE_DIR) if f.endswith('.jpg')])}")
-    print(f"   - Remaining failed words: {len(progress['failed'])}")
-    print(f"{ '='*60}")
+    # 打印批次结果
+    print(f"\n{'='*70}")
+    print(f"📊 第1批处理完成:")
+    print(f"   ✅ 成功: {success_count}")
+    print(f"   ❌ 失败: {fail_count}")
+    print(f"   🖼️  图片总数: {len([f for f in os.listdir(IMAGE_DIR) if f.endswith('.jpg')])}")
+    print(f"   📋 剩余失败单词: {len(progress['failed'])}")
+    print(f"{'='*70}")
+    
+    # 如果这一批全部失败，结束任务
+    if success_count == 0:
+        print("\n⚠️  这一批全部失败，结束任务")
+        return False
+    
+    # 如果这一批有部分成功，继续下一批
+    print("\n✅ 这一批有部分成功，继续下一批...")
+    return True
+
+
+def retry_continuously(batch_size=30):
+    """连续处理多批，直到某一批全部失败"""
+    batch_num = 1
+    
+    while True:
+        print(f"\n{'#'*70}")
+        print(f"# 第 {batch_num} 批处理")
+        print(f"{'#'*70}\n")
+        
+        should_continue = retry_failed(batch_size=batch_size)
+        
+        if not should_continue:
+            print("\n🎉 所有批次处理完成！")
+            break
+        
+        batch_num += 1
+        time.sleep(3)  # 批次之间休息3秒
 
 
 if __name__ == "__main__":
     import sys
-    batch_size = 100
+    batch_size = 30
     if len(sys.argv) > 1:
         try:
             batch_size = int(sys.argv[1])
         except ValueError:
             pass
-    retry_failed(batch_size=batch_size)
+    retry_continuously(batch_size=batch_size)
