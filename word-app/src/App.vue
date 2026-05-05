@@ -193,19 +193,19 @@ function playWordPartsSequentially(parts, currentIndex, onComplete) {
   audio.onended = () => {
     setTimeout(() => {
       playWordPartsSequentially(parts, currentIndex + 1, onComplete);
-    }, 200);
+    }, 80);
   };
   
   audio.onerror = () => {
     setTimeout(() => {
       playWordPartsSequentially(parts, currentIndex + 1, onComplete);
-    }, 200);
+    }, 80);
   };
   
   audio.play().catch(() => {
     setTimeout(() => {
       playWordPartsSequentially(parts, currentIndex + 1, onComplete);
-    }, 200);
+    }, 80);
   });
 }
 
