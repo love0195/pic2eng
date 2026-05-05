@@ -963,7 +963,8 @@
     "sports",
     "cakes",
     "sign",
-    "room"
+    "room",
+    "theme"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1907,7 +1908,17 @@
     "living",
     "room",
     "guest",
-    "post"
+    "post",
+    "fire",
+    "concert",
+    "hall",
+    "amusement",
+    "theme",
+    "building",
+    "index",
+    "middle",
+    "little",
+    "pressure"
   ],
   "failed_images": [
     "plain",
@@ -2045,7 +2056,16 @@
     "out",
     "living",
     "guest",
-    "post"
+    "post",
+    "fire",
+    "concert",
+    "hall",
+    "amusement",
+    "building",
+    "index",
+    "middle",
+    "little",
+    "pressure"
   ],
   "failed_audio": [
     "sofa_bed",
