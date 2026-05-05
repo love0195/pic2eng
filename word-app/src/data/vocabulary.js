@@ -523,7 +523,7 @@ export const vocabularyData = {
           { en: 'bamboo_shoot', zh: '竹笋' },
           { en: 'kale', zh: '羽衣甘蓝' },
           { en: 'artichoke', zh: '洋蓟' },
-          { en: ' Brussels_sprouts', zh: '抱子甘蓝' },
+          { en: 'brussels_sprouts', zh: '抱子甘蓝' },
           { en: 'fennel', zh: '茴香' },
           { en: 'bok_choy', zh: '小白菜' },
           { en: 'chives', zh: '细香葱' },
@@ -933,7 +933,7 @@ export const vocabularyData = {
           { en: 'fountain', zh: '喷泉' },
           { en: 'bench', zh: '长椅' },
           { en: 'bus_stop', zh: '公交站' },
-          { en: ' ATM', zh: '自动取款机' },
+          { en: 'ATM', zh: '自动取款机' },
           { en: 'phone_booth', zh: '电话亭' },
           { en: 'mailbox', zh: '邮箱' }
         ]
