@@ -836,7 +836,12 @@
     "evening",
     "night",
     "dawn",
-    "dusk"
+    "dusk",
+    "today",
+    "tomorrow",
+    "yesterday",
+    "monday",
+    "tuesday"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1560,12 +1565,17 @@
     "evening",
     "night",
     "dawn",
-    "dusk"
+    "dusk",
+    "today",
+    "tomorrow",
+    "yesterday"
   ],
   "failed_images": [
     "plain",
     "cream",
-    "nostril"
+    "nostril",
+    "wednesday",
+    "thursday"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1685,7 +1695,11 @@
     "middle_finger",
     "ring_finger",
     "little_finger",
-    "blood_pressure"
+    "blood_pressure",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday"
   ],
   "current_group": 0
 }
