@@ -1680,7 +1680,10 @@
     "thanksgiving",
     "easter",
     "valentine",
-    "spring_festival"
+    "spring_festival",
+    "dragon_boat",
+    "lantern_festival",
+    "labor_day"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1827,7 +1830,10 @@
     "valentine",
     "new_year",
     "spring_festival",
-    "mid_autumn"
+    "mid_autumn",
+    "dragon_boat",
+    "lantern_festival",
+    "labor_day"
   ],
   "current_group": 0
 }

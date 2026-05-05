@@ -976,7 +976,8 @@
     "zigzag",
     "spiral",
     "parallelogram",
-    "rough"
+    "rough",
+    "transparent"
   ],
   "failed": [
     "moisturizer",
@@ -1010,7 +1011,6 @@
     "smooth",
     "crescent",
     "hard",
-    "transparent",
     "dull",
     "soft",
     "opaque",
