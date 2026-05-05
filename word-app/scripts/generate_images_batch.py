@@ -51,7 +51,7 @@ def download_image(word):
     
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/512.36'
         }
         req = urllib.request.Request(url, headers=headers)
         
@@ -80,17 +80,17 @@ def batch_generate(batch_size=50, max_retries=3):
     remaining = len(to_process)
     completed = total - remaining
     
-    print(f"{'='*60}")
-    print(f"📊 进度: {completed}/{total} 完成 ({completed/total*100:.1f}%)")
-    print(f"剩余: {remaining} 张图片")
-    print(f"批量大小: {batch_size} 张/批")
-    print(f"{'='*60}")
+    print(f"{ '='*60}")
+    print(f"📊 Progress: {completed}/{total} done ({completed/total*100:.1f}%)")
+    print(f"Remaining: {remaining} images")
+    print(f"Batch size: {batch_size} images")
+    print(f"{ '='*60}")
     
     batch_words = to_process[:batch_size]
     success_count = 0
     fail_count = 0
     
-    print(f"\n开始处理批次 ({len(batch_words)} 张)...\n")
+    print(f"\nProcessing batch ({len(batch_words)} images)...\n")
     
     for idx, word in enumerate(batch_words, 1):
         print(f"[{idx}/{len(batch_words)}] {word}... ", end='', flush=True)
@@ -111,12 +111,12 @@ def batch_generate(batch_size=50, max_retries=3):
         if idx < len(batch_words):
             time.sleep(0.8)
     
-    print(f"\n{'='*60}")
-    print(f"📦 批次完成!")
-    print(f"成功: {success_count} 张")
-    print(f"失败: {fail_count} 张")
-    print(f"已生成图片总数: {len([f for f in os.listdir(IMAGE_DIR) if f.endswith('.jpg')])} 张")
-    print(f"{'='*60}")
+    print(f"\n{ '='*60}")
+    print(f"📦 Batch complete!")
+    print(f"Success: {success_count} images")
+    print(f"Failed: {fail_count} images")
+    print(f"Total images generated: {len([f for f in os.listdir(IMAGE_DIR) if f.endswith('.jpg')])}")
+    print(f"{ '='*60}")
 
 if __name__ == "__main__":
     import sys
