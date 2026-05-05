@@ -517,6 +517,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  padding-bottom: 100px;
 }
 
 .group-card, .category-card {
@@ -557,6 +558,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  padding-bottom: 100px;
 }
 
 .word-card {
