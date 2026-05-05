@@ -567,7 +567,21 @@
     "ferry",
     "yacht",
     "sailboat",
-    "canoe"
+    "canoe",
+    "kayak",
+    "jet",
+    "fighter",
+    "cargo_ship",
+    "road",
+    "highway",
+    "bridge",
+    "tunnel",
+    "station",
+    "airport",
+    "port",
+    "parking_lot",
+    "gas_station",
+    "traffic_light"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1054,7 +1068,17 @@
     "ferry",
     "yacht",
     "sailboat",
-    "canoe"
+    "canoe",
+    "kayak",
+    "jet",
+    "fighter",
+    "road",
+    "highway",
+    "bridge",
+    "tunnel",
+    "station",
+    "airport",
+    "port"
   ],
   "failed_images": [
     "plain",
@@ -1145,7 +1169,11 @@
     "police_car",
     "school_bus",
     "hot_air_balloon",
-    "sports_car"
+    "sports_car",
+    "cargo_ship",
+    "parking_lot",
+    "gas_station",
+    "traffic_light"
   ],
   "current_group": 0
 }
