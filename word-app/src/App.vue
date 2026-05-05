@@ -418,7 +418,6 @@ onUnmounted(() => {
         :class="{ active: currentPage === 'home' || currentPage === 'category' }"
         @click="goToHome"
       >
-        <span class="nav-icon">🏠</span>
         <span class="nav-label">首页</span>
       </button>
       <button
@@ -426,7 +425,6 @@ onUnmounted(() => {
         :class="{ active: currentPage === 'random' }"
         @click="goToRandom"
       >
-        <span class="nav-icon">🎲</span>
         <span class="nav-label">随机</span>
       </button>
     </nav>
@@ -777,10 +775,9 @@ onUnmounted(() => {
 .bottom-nav .nav-item {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 10px 12px;
+  justify-content: center;
+  padding: 12px 12px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -795,12 +792,8 @@ onUnmounted(() => {
   color: #409eff;
 }
 
-.bottom-nav .nav-icon {
-  font-size: 24px;
-}
-
 .bottom-nav .nav-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
