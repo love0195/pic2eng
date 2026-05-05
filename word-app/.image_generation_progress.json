@@ -951,7 +951,10 @@
     "khaki",
     "Memorial_Day",
     "burgundy",
-    "sky_blue"
+    "sky_blue",
+    "dark_green",
+    "midnight",
+    "maroon"
   ],
   "failed": [
     "moisturizer",
@@ -963,7 +966,6 @@
     "nostril",
     "single",
     "lot",
-    "midnight",
     "green",
     "yellow",
     "purple",
@@ -971,7 +973,6 @@
     "gray",
     "silver",
     "beige",
-    "maroon",
     "turquoise",
     "violet",
     "ivory",
@@ -979,7 +980,6 @@
     "tan",
     "magenta",
     "teal",
-    "dark_green",
     "light_pink",
     "circle",
     "light_blue",

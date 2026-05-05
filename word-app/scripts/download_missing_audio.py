@@ -3,8 +3,9 @@ import os
 import sys
 import time
 import json
-import requests
+import urllib.request
 import urllib.parse
+import urllib.error
 from pathlib import Path
 
 # 配置路径
@@ -22,38 +23,45 @@ def load_missing_list():
     return []
 
 def download_audio(word):
-    """下载单个音频"""
+    """下载单个音频 - 使用有道词典API"""
     audio_path = AUDIO_DIR / f'{word}.mp3'
     
-    if audio_path.exists() and os.path.getsize(audio_path) > 1024:
+    if audio_path.exists() and os.path.getsize(audio_path) > 1000:
         return True, '已存在'
     
-    # Google Text-to-Speech
-    tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={urllib.parse.quote(word)}&tl=en"
+    # 有道词典TTS API
+    url = f"http://dict.youdao.com/dictvoice?audio={urllib.parse.quote(word)}&type=2"
     
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(tts_url, headers=headers, timeout=30)
-        response.raise_for_status()
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        req = urllib.request.Request(url, headers=headers)
         
-        # 保存音频
-        with open(audio_path, 'wb') as f:
-            f.write(response.content)
-        
-        # 验证大小
-        if os.path.getsize(audio_path) > 1024:
-            return True, '下载成功'
-        else:
-            os.remove(audio_path)
-            return False, '音频太小'
+        with urllib.request.urlopen(req, timeout=30) as response:
+            content_type = response.headers.get('Content-Type', '')
+            content_length = response.headers.get('Content-Length', '0')
             
-    except requests.exceptions.HTTPError as e:
-        if e.response and e.response.status_code == 429:
+            # 验证响应是音频
+            if 'audio' not in content_type and int(content_length) == 0:
+                return False, '非音频内容'
+            
+            content = response.read()
+            
+            # 保存音频
+            with open(audio_path, 'wb') as f:
+                f.write(content)
+            
+            # 验证大小
+            if os.path.getsize(audio_path) < 1000:
+                os.remove(audio_path)
+                return False, '文件太小'
+            
+            return True, '下载成功'
+            
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
             print("⚠️  触发429，等待10秒...")
             time.sleep(10)
-        return False, f'HTTP错误: {e}'
+        return False, f'HTTP错误: {e.code}'
     except Exception as e:
         return False, f'错误: {e}'
 
@@ -67,7 +75,9 @@ def git_commit(message):
 
 def main():
     print("🚀 开始下载缺失的音频文件...")
-    print(f"📁 音频目录: {AUDIO_DIR}\n")
+    print(f"📁 音频目录: {AUDIO_DIR}")
+    print(f"🔊 使用服务: 有道词典TTS API")
+    print(f"📋 API: http://dict.youdao.com/dictvoice\n")
     
     missing_words = load_missing_list()
     
@@ -99,7 +109,7 @@ def main():
         batch_failed = 0
         
         for i, word in enumerate(batch_words):
-            print(f"[{i+1}/{len(batch_words)}] 下载: {word}.mp3", end=" ... ", flush=True)
+            print(f"[{i+1}/{len(batch_words)}] {word}.mp3", end=" ... ", flush=True)
             
             success, msg = download_audio(word)
             
@@ -110,8 +120,8 @@ def main():
                 batch_failed += 1
                 print(f"❌ {msg}")
             
-            # 间隔2秒
-            time.sleep(2)
+            # 间隔0.5秒
+            time.sleep(0.5)
         
         total_success += batch_success
         total_failed += batch_failed
