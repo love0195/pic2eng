@@ -966,7 +966,10 @@
     "sphere",
     "schedule",
     "teal",
-    "cube"
+    "cube",
+    "cone",
+    "curve",
+    "semicircle"
   ],
   "failed": [
     "moisturizer",
@@ -993,12 +996,9 @@
     "light_blue",
     "square",
     "rectangle",
-    "cone",
     "line",
-    "curve",
     "angle",
     "edge",
-    "semicircle",
     "corner",
     "quarter",
     "clock",

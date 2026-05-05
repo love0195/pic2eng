@@ -841,7 +841,10 @@
     "tomorrow",
     "yesterday",
     "monday",
-    "tuesday"
+    "tuesday",
+    "sunday",
+    "february",
+    "may"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1575,7 +1578,12 @@
     "cream",
     "nostril",
     "wednesday",
-    "thursday"
+    "thursday",
+    "friday",
+    "saturday",
+    "january",
+    "march",
+    "april"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1699,7 +1707,15 @@
     "monday",
     "tuesday",
     "wednesday",
-    "thursday"
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+    "january",
+    "february",
+    "march",
+    "april",
+    "may"
   ],
   "current_group": 0
 }
