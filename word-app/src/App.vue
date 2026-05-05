@@ -6,8 +6,6 @@ const currentGroup = ref(Object.keys(vocabularyData)[0]);
 const currentCategory = ref('');
 const playingIndex = ref(-1);
 const showMobileNav = ref(false);
-const touchStartX = ref(0);
-const touchEndX = ref(0);
 
 const groupKeys = computed(() => Object.keys(vocabularyData));
 
@@ -40,6 +38,7 @@ function switchGroup(groupKey) {
   currentGroup.value = groupKey;
   currentCategory.value = '';
   initCategory();
+  showMobileNav.value = false;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -53,66 +52,77 @@ function getImageUrl(word) {
 }
 
 function getAudioUrl(word) {
-  return `/audio/${word.en}.mp3`;
+  // 兼容 word 对象和字符串两种情况
+  const wordStr = typeof word === 'string' ? word : word.en;
+  return `/audio/${wordStr}.mp3`;
 }
 
 function playPronunciation(word, index) {
   playingIndex.value = index;
   
-  const wordParts = word.en.split('_');
+  // 先尝试直接播放完整单词的音频
+  const audio = new Audio();
+  audio.src = getAudioUrl(word.en);
   
-  async function playParts() {
-    for (let i = 0; i < wordParts.length; i++) {
-      const part = wordParts[i];
-      const audio = new Audio();
-      audio.src = getAudioUrl(part);
-      
-      await new Promise((resolve) => {
-        audio.onended = resolve;
-        audio.onerror = resolve;
-        audio.play().catch(resolve);
-        
-        setTimeout(() => resolve(), 2000);
+  audio.onended = () => {
+    playingIndex.value = -1;
+  };
+  
+  audio.onerror = (e) => {
+    console.log(`无法播放 ${word.en}.mp3，尝试拆分播放`);
+    // 如果完整单词播放失败，尝试拆分播放
+    const wordParts = word.en.split('_');
+    if (wordParts.length > 1) {
+      playWordParts(wordParts, 0, () => {
+        playingIndex.value = -1;
       });
-      
-      if (i < wordParts.length - 1) {
-        await new Promise(r => setTimeout(r, 300));
-      }
+    } else {
+      playingIndex.value = -1;
     }
-    playingIndex.value = -1;
+  };
+  
+  audio.play().catch((err) => {
+    console.log(`播放失败: ${err}`);
+    const wordParts = word.en.split('_');
+    if (wordParts.length > 1) {
+      playWordParts(wordParts, 0, () => {
+        playingIndex.value = -1;
+      });
+    } else {
+      playingIndex.value = -1;
+    }
+  });
+}
+
+function playWordParts(parts, index, onComplete) {
+  if (index >= parts.length) {
+    onComplete();
+    return;
   }
   
-  playParts();
+  const audio = new Audio();
+  audio.src = getAudioUrl(parts[index]);
   
-  setTimeout(() => {
-    playingIndex.value = -1;
-  }, 2000 * wordParts.length + 500);
+  audio.onended = () => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  };
+  
+  audio.onerror = () => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  };
+  
+  audio.play().catch(() => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  });
 }
 
-function handleTouchStart(e) {
-  touchStartX.value = e.touches[0].clientX;
-}
 
-function handleTouchMove(e) {
-  touchEndX.value = e.touches[0].clientX;
-}
-
-function handleTouchEnd() {
-  const diff = touchStartX.value - touchEndX.value;
-  const threshold = 80;
-  
-  if (Math.abs(diff) > threshold) {
-    const currentIndex = groupKeys.value.indexOf(currentGroup.value);
-    if (diff > 0 && currentIndex < groupKeys.value.length - 1) {
-      switchGroup(groupKeys.value[currentIndex + 1]);
-    } else if (diff < 0 && currentIndex > 0) {
-      switchGroup(groupKeys.value[currentIndex - 1]);
-    }
-  }
-  
-  touchStartX.value = 0;
-  touchEndX.value = 0;
-}
 
 function handleKeyDown(e) {
   if (e.key === 'Escape') {
@@ -133,9 +143,6 @@ onUnmounted(() => {
 <template>
   <div 
     class="app-container"
-    @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
-    @touchend="handleTouchEnd"
   >
     <header class="app-header">
       <div class="header-content">
@@ -211,7 +218,7 @@ onUnmounted(() => {
           :key="word.en"
           class="word-card"
           :class="{ playing: playingIndex === index }"
-          @click.stop.prevent="playPronunciation(word, index)"
+          @click="playPronunciation(word, index)"
         >
           <div class="card-inner">
             <div class="image-wrapper">
@@ -220,7 +227,12 @@ onUnmounted(() => {
                 :alt="word.en"
                 class="word-image"
                 loading="lazy"
+                @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
               />
+              <div class="no-image" style="display: none;">
+                <span class="no-image-icon">📝</span>
+                <span class="no-image-text">{{ word.en }}</span>
+              </div>
               <div class="play-overlay" v-if="playingIndex === index">
                 <span class="play-icon">🔊</span>
               </div>
@@ -234,12 +246,7 @@ onUnmounted(() => {
       </div>
     </main>
 
-    <footer class="app-footer">
-      <div class="swipe-hint">
-        <span class="hint-icon">👆</span>
-        <span>左右滑动切换分类</span>
-      </div>
-    </footer>
+
   </div>
 </template>
 
@@ -549,7 +556,7 @@ onUnmounted(() => {
 }
 
 .main-content {
-  padding: 8px 12px 100px;
+  padding: 8px 12px 40px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -595,6 +602,28 @@ onUnmounted(() => {
   aspect-ratio: 1;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
   overflow: hidden;
+}
+
+.no-image {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  color: #909399;
+}
+
+.no-image-icon {
+  font-size: 48px;
+}
+
+.no-image-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
 .word-image {
@@ -651,30 +680,6 @@ onUnmounted(() => {
   color: #909399;
 }
 
-.app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0) 0%, rgba(248, 250, 252, 0.95) 20%, rgba(248, 250, 252, 1) 100%);
-  pointer-events: none;
-}
-
-.swipe-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #c0c4cc;
-}
-
-.hint-icon {
-  font-size: 16px;
-}
-
 @media (min-width: 500px) {
   .word-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -688,10 +693,6 @@ onUnmounted(() => {
   .word-zh {
     font-size: 13px;
   }
-  
-  .app-footer {
-    display: none;
-  }
 }
 
 @media (min-width: 768px) {
@@ -701,7 +702,7 @@ onUnmounted(() => {
   }
   
   .main-content {
-    padding: 16px 24px 120px;
+    padding: 16px 24px 40px;
   }
   
   .nav-toggle {
