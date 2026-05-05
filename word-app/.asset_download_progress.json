@@ -135,7 +135,21 @@
     "floss",
     "mouthwash",
     "lotion",
-    "sunscreen"
+    "sunscreen",
+    "makeup",
+    "moisturizer",
+    "deodorant",
+    "bathrobe",
+    "slippers",
+    "scale",
+    "plunger",
+    "toilet_paper",
+    "tissue",
+    "cotton_ball",
+    "q_tips",
+    "shower_gel",
+    "hair_brush",
+    "broom"
   ],
   "downloaded_audio": [
     "sofa",
@@ -247,7 +261,17 @@
     "floss",
     "mouthwash",
     "lotion",
-    "sunscreen"
+    "sunscreen",
+    "makeup",
+    "moisturizer",
+    "deodorant",
+    "bathrobe",
+    "slippers",
+    "scale",
+    "plunger",
+    "tissue",
+    "q_tips",
+    "broom"
   ],
   "failed_images": [],
   "failed_audio": [
@@ -276,7 +300,11 @@
     "kitchen_towel",
     "aluminum_foil",
     "plastic_wrap",
-    "trash_can"
+    "trash_can",
+    "toilet_paper",
+    "cotton_ball",
+    "shower_gel",
+    "hair_brush"
   ],
   "current_group": 0
 }
