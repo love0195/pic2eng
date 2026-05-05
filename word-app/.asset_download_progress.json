@@ -376,7 +376,19 @@
     "durian",
     "persimmon",
     "tangerine",
-    "guava"
+    "guava",
+    "passion_fruit",
+    "pitaya",
+    "star_fruit",
+    "jackfruit",
+    "carrot",
+    "tomato",
+    "potato",
+    "onion",
+    "garlic",
+    "broccoli",
+    "cabbage",
+    "lettuce"
   ],
   "downloaded_audio": [
     "sofa",
@@ -707,7 +719,17 @@
     "durian",
     "persimmon",
     "tangerine",
-    "guava"
+    "guava",
+    "pitaya",
+    "jackfruit",
+    "carrot",
+    "tomato",
+    "potato",
+    "onion",
+    "garlic",
+    "broccoli",
+    "cabbage",
+    "lettuce"
   ],
   "failed_images": [
     "plain"
@@ -761,7 +783,9 @@
     "maple_tree",
     "oak_tree",
     "coconut_tree",
-    "dragon_fruit"
+    "dragon_fruit",
+    "passion_fruit",
+    "star_fruit"
   ],
   "current_group": 0
 }
