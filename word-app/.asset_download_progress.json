@@ -844,7 +844,17 @@
     "tuesday",
     "sunday",
     "february",
-    "may"
+    "may",
+    "july",
+    "august",
+    "midnight",
+    "noon",
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1571,7 +1581,15 @@
     "dusk",
     "today",
     "tomorrow",
-    "yesterday"
+    "yesterday",
+    "midnight",
+    "noon",
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five"
   ],
   "failed_images": [
     "plain",
@@ -1583,7 +1601,12 @@
     "saturday",
     "january",
     "march",
-    "april"
+    "april",
+    "june",
+    "september",
+    "october",
+    "november",
+    "december"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1715,7 +1738,14 @@
     "february",
     "march",
     "april",
-    "may"
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december"
   ],
   "current_group": 0
 }
