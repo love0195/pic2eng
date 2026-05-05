@@ -659,7 +659,8 @@
     "passport",
     "suv",
     "parking_lot",
-    "sidewalk"
+    "sidewalk",
+    "clock_tower"
   ],
   "failed": [
     "moisturizer",
@@ -672,7 +673,6 @@
     "cream",
     "sailboat",
     "monument",
-    "clock_tower",
     "overpass",
     "underpass",
     "roundabout",
