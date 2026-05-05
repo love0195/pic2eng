@@ -57,10 +57,13 @@ def download_image(word):
         return False, f'错误: {e}'
 
 def git_commit(message):
-    """提交到git"""
-    print(f"\n📦 提交到Git: {message}")
+    """提交到git - 先构建再提交"""
+    print(f"\n📦 构建 dist 目录...")
     os.chdir(BASE_DIR)
-    os.system('git add public/images/')
+    os.system('npm run build')
+    
+    print(f"\n📦 提交到Git: {message}")
+    os.system('git add public/images/ dist/')
     os.system(f'git commit -m "{message}"')
     os.system('git push')
 
