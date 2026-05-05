@@ -889,7 +889,19 @@
     "holiday",
     "christmas",
     "new_year",
-    "mid_autumn"
+    "mid_autumn",
+    "mother_day",
+    "teacher_day",
+    "memorial_day",
+    "vacation",
+    "weekend",
+    "schedule",
+    "appointment",
+    "deadline",
+    "calendar",
+    "clock",
+    "alarm",
+    "red"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1657,7 +1669,17 @@
     "wedding",
     "anniversary",
     "festival",
-    "holiday"
+    "holiday",
+    "vacation",
+    "weekend",
+    "schedule",
+    "appointment",
+    "deadline",
+    "calendar",
+    "clock",
+    "alarm",
+    "red",
+    "yellow"
   ],
   "failed_images": [
     "plain",
@@ -1683,7 +1705,11 @@
     "spring_festival",
     "dragon_boat",
     "lantern_festival",
-    "labor_day"
+    "labor_day",
+    "national_day",
+    "children_day",
+    "father_day",
+    "yellow"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1833,7 +1859,13 @@
     "mid_autumn",
     "dragon_boat",
     "lantern_festival",
-    "labor_day"
+    "labor_day",
+    "national_day",
+    "children_day",
+    "mother_day",
+    "father_day",
+    "teacher_day",
+    "memorial_day"
   ],
   "current_group": 0
 }
