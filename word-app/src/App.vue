@@ -294,6 +294,9 @@ onUnmounted(() => {
           <span>{{ selectedCategory?.icon }}</span>
           <span>{{ selectedCategory?.name }}</span>
         </h1>
+        <button class="play-btn-header" @click="startPlayMode">
+          ▶️
+        </button>
       </header>
       
       <main class="category-content">
@@ -326,11 +329,6 @@ onUnmounted(() => {
           </div>
         </div>
       </main>
-      
-      <button class="play-start-btn" @click="startPlayMode">
-        <span class="play-btn-icon">▶️</span>
-        <span>随机播放模式</span>
-      </button>
     </div>
     
     <!-- 播放页面 -->
@@ -486,10 +484,28 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
 }
 
 .title-icon {
   font-size: 22px;
+}
+
+.play-btn-header {
+  padding: 8px 16px;
+  border: none;
+  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  border-radius: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.play-btn-header:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
 }
 
 .home-content, .category-content {
@@ -543,7 +559,6 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  padding-bottom: 80px;
 }
 
 .word-card {
@@ -619,37 +634,6 @@ onUnmounted(() => {
 .word-zh {
   font-size: 12px;
   color: #909399;
-}
-
-/* 播放开始按钮 */
-.play-start-btn {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
-  color: white;
-  border: none;
-  border-radius: 30px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
-  transition: transform 0.2s, box-shadow 0.2s;
-  z-index: 90;
-}
-
-.play-start-btn:hover {
-  transform: translateX(-50%) translateY(-2px);
-  box-shadow: 0 6px 16px rgba(64, 158, 255, 0.5);
-}
-
-.play-btn-icon {
-  font-size: 20px;
 }
 
 /* 播放页面 */
