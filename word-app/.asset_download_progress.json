@@ -956,7 +956,9 @@
     "paper",
     "ball",
     "scrub",
-    "oak"
+    "oak",
+    "dragon",
+    "shoot"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1850,7 +1852,14 @@
     "pine",
     "blossom",
     "maple",
-    "oak"
+    "oak",
+    "dragon",
+    "fruit",
+    "passion",
+    "bell",
+    "shoot",
+    "bok",
+    "choy"
   ],
   "failed_images": [
     "plain",
@@ -1945,7 +1954,12 @@
     "steam",
     "pine",
     "blossom",
-    "maple"
+    "maple",
+    "fruit",
+    "passion",
+    "bell",
+    "bok",
+    "choy"
   ],
   "failed_audio": [
     "sofa_bed",
