@@ -443,7 +443,12 @@
     "energy_drink",
     "sports_drink",
     "green_tea",
-    "black_tea"
+    "black_tea",
+    "white_tea",
+    "oolong_tea",
+    "latte",
+    "cappuccino",
+    "espresso"
   ],
   "downloaded_audio": [
     "sofa",
@@ -825,7 +830,10 @@
     "cocoa",
     "honey",
     "syrup",
-    "lemonade"
+    "lemonade",
+    "latte",
+    "cappuccino",
+    "espresso"
   ],
   "failed_images": [
     "plain"
@@ -895,7 +903,9 @@
     "energy_drink",
     "sports_drink",
     "green_tea",
-    "black_tea"
+    "black_tea",
+    "white_tea",
+    "oolong_tea"
   ],
   "current_group": 0
 }
