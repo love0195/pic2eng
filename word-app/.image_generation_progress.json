@@ -977,7 +977,9 @@
     "spiral",
     "parallelogram",
     "rough",
-    "transparent"
+    "transparent",
+    "opaque",
+    "crescent"
   ],
   "failed": [
     "moisturizer",
@@ -1009,11 +1011,9 @@
     "quarter",
     "arrow",
     "smooth",
-    "crescent",
     "hard",
     "dull",
     "soft",
-    "opaque",
     "rigid",
     "flexible",
     "thick",
