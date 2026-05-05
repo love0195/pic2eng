@@ -909,7 +909,19 @@
     "gold",
     "silver",
     "cyan",
-    "navy"
+    "navy",
+    "maroon",
+    "olive",
+    "violet",
+    "indigo",
+    "scarlet",
+    "khaki",
+    "burgundy",
+    "teal",
+    "magenta",
+    "sky_blue",
+    "dark_green",
+    "circle"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1699,7 +1711,21 @@
     "gold",
     "silver",
     "cyan",
-    "navy"
+    "navy",
+    "beige",
+    "maroon",
+    "olive",
+    "turquoise",
+    "violet",
+    "indigo",
+    "scarlet",
+    "ivory",
+    "khaki",
+    "tan",
+    "burgundy",
+    "teal",
+    "magenta",
+    "circle"
   ],
   "failed_images": [
     "plain",
@@ -1733,7 +1759,13 @@
     "green",
     "purple",
     "white",
-    "gray"
+    "gray",
+    "beige",
+    "turquoise",
+    "ivory",
+    "tan",
+    "light_pink",
+    "light_blue"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1889,7 +1921,11 @@
     "mother_day",
     "father_day",
     "teacher_day",
-    "memorial_day"
+    "memorial_day",
+    "sky_blue",
+    "light_pink",
+    "dark_green",
+    "light_blue"
   ],
   "current_group": 0
 }
