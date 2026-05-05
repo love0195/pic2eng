@@ -2,49 +2,150 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { vocabularyData } from './data/vocabulary';
 
-const currentGroup = ref(Object.keys(vocabularyData)[0]);
-const currentCategory = ref('');
-const playingIndex = ref(-1);
-const showMobileNav = ref(false);
+// 页面状态
+const currentPage = ref('home'); // 'home', 'random', 'category', 'play'
+
+// 分类选择
+const selectedGroup = ref(null);
+const selectedCategory = ref(null);
+
+// 播放模式
+const isPlaying = ref(false);
+const currentPlayIndex = ref(0);
+const playWords = ref([]);
+let playTimer = null;
 
 const groupKeys = computed(() => Object.keys(vocabularyData));
 
-const currentGroupData = computed(() => vocabularyData[currentGroup.value]);
+function getAllCategories() {
+  const categories = [];
+  for (const groupKey of groupKeys.value) {
+    const group = vocabularyData[groupKey];
+    for (const catKey in group.categories) {
+      categories.push({
+        groupKey,
+        catKey,
+        name: group.categories[catKey].name,
+        icon: group.categories[catKey].icon,
+        words: group.categories[catKey].words
+      });
+    }
+  }
+  return categories;
+}
 
-const categoryKeys = computed(() => {
-  if (!currentGroupData.value) return [];
-  return Object.keys(currentGroupData.value.categories);
-});
+function getGroupCategories(groupKey) {
+  const group = vocabularyData[groupKey];
+  const categories = [];
+  for (const catKey in group.categories) {
+    categories.push({
+      catKey,
+      name: group.categories[catKey].name,
+      icon: group.categories[catKey].icon,
+      words: group.categories[catKey].words
+    });
+  }
+  return categories;
+}
 
-const currentWords = computed(() => {
-  if (!currentCategory.value || !currentGroupData.value) return [];
-  const category = currentGroupData.value.categories[currentCategory.value];
-  return category ? category.words : [];
-});
+function goToHome() {
+  currentPage.value = 'home';
+  selectedGroup.value = null;
+  selectedCategory.value = null;
+  stopPlay();
+}
 
-const totalWordsCount = computed(() => {
-  if (!currentGroupData.value) return 0;
-  return Object.values(currentGroupData.value.categories)
-    .reduce((sum, cat) => sum + cat.words.length, 0);
-});
+function goToRandom() {
+  const categories = getAllCategories();
+  const randomCat = categories[Math.floor(Math.random() * categories.length)];
+  selectedGroup.value = randomCat.groupKey;
+  selectedCategory.value = randomCat;
+  currentPage.value = 'category';
+}
 
-function initCategory() {
-  if (categoryKeys.value.length > 0 && !currentCategory.value) {
-    currentCategory.value = categoryKeys.value[0];
+function selectGroup(groupKey) {
+  selectedGroup.value = groupKey;
+}
+
+function selectCategory(category) {
+  selectedCategory.value = category;
+  currentPage.value = 'category';
+}
+
+function startPlayMode() {
+  playWords.value = [...selectedCategory.value.words];
+  shuffleArray(playWords.value);
+  currentPlayIndex.value = 0;
+  isPlaying.value = true;
+  currentPage.value = 'play';
+  startAutoPlay();
+}
+
+function togglePlay() {
+  if (isPlaying.value) {
+    stopPlay();
+  } else {
+    isPlaying.value = true;
+    startAutoPlay();
   }
 }
 
-function switchGroup(groupKey) {
-  currentGroup.value = groupKey;
-  currentCategory.value = '';
-  initCategory();
-  showMobileNav.value = false;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function stopPlay() {
+  isPlaying.value = false;
+  if (playTimer) {
+    clearTimeout(playTimer);
+    playTimer = null;
+  }
 }
 
-function switchCategory(categoryKey) {
-  currentCategory.value = categoryKey;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function nextCard() {
+  currentPlayIndex.value = (currentPlayIndex.value + 1) % playWords.value.length;
+  if (isPlaying.value) {
+    startAutoPlay();
+  }
+}
+
+function prevCard() {
+  currentPlayIndex.value = (currentPlayIndex.value - 1 + playWords.value.length) % playWords.value.length;
+  if (isPlaying.value) {
+    startAutoPlay();
+  }
+}
+
+function startAutoPlay() {
+  stopPlay();
+  isPlaying.value = true;
+  
+  const word = playWords.value[currentPlayIndex.value];
+  
+  // 播放3遍，每遍间隔0.5秒
+  let playCount = 0;
+  const playNext = () => {
+    if (playCount >= 3) {
+      // 播放完3遍后，停留2秒，然后下一张
+      playTimer = setTimeout(() => {
+        if (isPlaying.value) {
+          nextCard();
+        }
+      }, 2000);
+      return;
+    }
+    
+    playCount++;
+    playPronunciationOnce(word, () => {
+      if (isPlaying.value && playCount < 3) {
+        playTimer = setTimeout(playNext, 500);
+      } else if (isPlaying.value && playCount >= 3) {
+        playTimer = setTimeout(() => {
+          if (isPlaying.value) {
+            nextCard();
+          }
+        }, 2000);
+      }
+    });
+  };
+  
+  playNext();
 }
 
 function getImageUrl(word) {
@@ -56,34 +157,32 @@ function getAudioUrl(word) {
   return `/audio/${wordStr}.mp3`;
 }
 
-function playPronunciation(word, index) {
-  playingIndex.value = index;
-  
+function playPronunciationOnce(word, onComplete) {
   const wordParts = word.en.split('_');
   
   if (wordParts.length > 1) {
-    playWordPartsSequentially(wordParts, 0);
+    playWordPartsSequentially(wordParts, 0, onComplete);
   } else {
     const audio = new Audio();
     audio.src = getAudioUrl(word.en);
     
     audio.onended = () => {
-      playingIndex.value = -1;
+      onComplete();
     };
     
     audio.onerror = () => {
-      playingIndex.value = -1;
+      onComplete();
     };
     
     audio.play().catch(() => {
-      playingIndex.value = -1;
+      onComplete();
     });
   }
 }
 
-function playWordPartsSequentially(parts, currentIndex) {
+function playWordPartsSequentially(parts, currentIndex, onComplete) {
   if (currentIndex >= parts.length) {
-    playingIndex.value = -1;
+    onComplete();
     return;
   }
   
@@ -91,145 +190,248 @@ function playWordPartsSequentially(parts, currentIndex) {
   const audio = new Audio();
   audio.src = getAudioUrl(part);
   
-  let hasStarted = false;
-  
-  audio.oncanplay = () => {
-    if (!hasStarted) {
-      hasStarted = true;
-      audio.play().catch(() => {
-        setTimeout(() => {
-          playWordPartsSequentially(parts, currentIndex + 1);
-        }, 300);
-      });
-    }
-  };
-  
   audio.onended = () => {
     setTimeout(() => {
-      playWordPartsSequentially(parts, currentIndex + 1);
+      playWordPartsSequentially(parts, currentIndex + 1, onComplete);
     }, 200);
   };
   
   audio.onerror = () => {
     setTimeout(() => {
-      playWordPartsSequentially(parts, currentIndex + 1);
+      playWordPartsSequentially(parts, currentIndex + 1, onComplete);
     }, 200);
   };
   
-  setTimeout(() => {
-    if (!hasStarted) {
-      playWordPartsSequentially(parts, currentIndex + 1);
-    }
-  }, 3000);
+  audio.play().catch(() => {
+    setTimeout(() => {
+      playWordPartsSequentially(parts, currentIndex + 1, onComplete);
+    }, 200);
+  });
 }
 
-function handleKeyDown(e) {
-  if (e.key === 'Escape') {
-    showMobileNav.value = false;
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
-onMounted(() => {
-  initCategory();
-  document.addEventListener('keydown', handleKeyDown);
-});
+function getPrevWord() {
+  if (playWords.value.length === 0) return null;
+  const index = (currentPlayIndex.value - 1 + playWords.value.length) % playWords.value.length;
+  return playWords.value[index];
+}
+
+function getNextWord() {
+  if (playWords.value.length === 0) return null;
+  const index = (currentPlayIndex.value + 1) % playWords.value.length;
+  return playWords.value[index];
+}
+
+function getCurrentWord() {
+  if (playWords.value.length === 0) return null;
+  return playWords.value[currentPlayIndex.value];
+}
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown);
+  stopPlay();
 });
 </script>
 
 <template>
-  <div 
-    class="app-container"
-  >
-    <header class="app-header">
-      <div class="header-content">
-        <h1 class="app-title">
+  <div class="app-container">
+    <!-- 首页 -->
+    <div v-if="currentPage === 'home'" class="page-content">
+      <header class="page-header">
+        <h1 class="page-title">
           <span class="title-icon">📚</span>
           <span>Picture English</span>
         </h1>
-        <button 
-          class="nav-toggle"
-          @click="showMobileNav = !showMobileNav"
-        >
-          <span v-if="!showMobileNav">☰</span>
-          <span v-else>✕</span>
-        </button>
-      </div>
-    </header>
-
-    <nav 
-      class="nav-menu"
-      :class="{ 'mobile-open': showMobileNav }"
-    >
-      <div class="nav-content">
-        <div class="nav-section">
-          <div class="nav-items">
-            <button
-              v-for="group in groupKeys"
-              :key="group"
-              class="nav-item"
-              :class="{ active: currentGroup === group }"
-              @click="switchGroup(group)"
-            >
-              <span class="nav-icon">{{ vocabularyData[group].icon }}</span>
-              <span class="nav-label">{{ vocabularyData[group].groupName }}</span>
-            </button>
+      </header>
+      
+      <main class="home-content">
+        <!-- 如果没选分组，显示分组 -->
+        <div v-if="!selectedGroup" class="group-grid">
+          <div
+            v-for="groupKey in groupKeys"
+            :key="groupKey"
+            class="group-card"
+            @click="selectGroup(groupKey)"
+          >
+            <span class="group-icon">{{ vocabularyData[groupKey].icon }}</span>
+            <span class="group-name">{{ vocabularyData[groupKey].groupName }}</span>
           </div>
         </div>
         
-        <div class="category-tabs" v-if="currentGroupData">
-          <div class="category-scroll">
-            <button
-              v-for="catKey in categoryKeys"
-              :key="catKey"
-              class="category-tab"
-              :class="{ active: currentCategory === catKey }"
-              @click="switchCategory(catKey)"
+        <!-- 如果选了分组，显示该分组的分类 -->
+        <div v-else class="category-page">
+          <button class="back-btn" @click="selectedGroup = null">
+            <span>← 返回</span>
+          </button>
+          <div class="category-grid">
+            <div
+              v-for="cat in getGroupCategories(selectedGroup)"
+              :key="cat.catKey"
+              class="category-card"
+              @click="selectCategory(cat)"
             >
-              <span class="tab-icon">{{ currentGroupData.categories[catKey].icon }}</span>
-              <span class="tab-label">{{ currentGroupData.categories[catKey].name }}</span>
-            </button>
+              <span class="category-icon">{{ cat.icon }}</span>
+              <span class="category-name">{{ cat.name }}</span>
+              <span class="category-count">{{ cat.words.length }}个</span>
+            </div>
           </div>
         </div>
+      </main>
+    </div>
+    
+    <!-- 分类页面 -->
+    <div v-else-if="currentPage === 'category'" class="page-content">
+      <header class="page-header">
+        <button class="back-btn" @click="goToHome">
+          <span>← 返回</span>
+        </button>
+        <h1 class="page-title">
+          <span>{{ selectedCategory?.icon }}</span>
+          <span>{{ selectedCategory?.name }}</span>
+        </h1>
+      </header>
+      
+      <main class="category-content">
+        <div class="word-grid">
+          <div
+            v-for="(word, index) in selectedCategory?.words"
+            :key="word.en"
+            class="word-card"
+            @click="playPronunciationOnce(word, () => {})"
+          >
+            <div class="card-inner">
+              <div class="image-wrapper">
+                <img
+                  :src="getImageUrl(word)"
+                  :alt="word.en"
+                  class="word-image"
+                  loading="lazy"
+                  @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
+                />
+                <div class="no-image" style="display: none;">
+                  <span class="no-image-icon">📝</span>
+                  <span class="no-image-text">{{ word.en }}</span>
+                </div>
+              </div>
+              <div class="word-info">
+                <div class="word-en">{{ word.en }}</div>
+                <div class="word-zh">{{ word.zh }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <button class="play-start-btn" @click="startPlayMode">
+        <span class="play-btn-icon">▶️</span>
+        <span>随机播放模式</span>
+      </button>
+    </div>
+    
+    <!-- 播放页面 -->
+    <div v-else-if="currentPage === 'play'" class="page-content play-page">
+      <header class="page-header">
+        <button class="back-btn" @click="() => { stopPlay(); currentPage = 'category' }">
+          <span>← 返回</span>
+        </button>
+        <h1 class="page-title">播放中...</h1>
+      </header>
+      
+      <main class="play-content">
+        <div class="cards-container">
+          <!-- 上一个卡片 -->
+          <div class="side-card" @click="prevCard">
+            <div v-if="getPrevWord()" class="mini-card">
+              <div class="image-wrapper">
+                <img
+                  :src="getImageUrl(getPrevWord())"
+                  :alt="getPrevWord().en"
+                  class="word-image"
+                  @error="(e) => { e.target.style.display = 'none'; }"
+                />
+              </div>
+              <div class="word-info">
+                <div class="word-en">{{ getPrevWord()?.en }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 当前卡片 -->
+          <div class="main-card">
+            <div v-if="getCurrentWord()" class="large-card-inner">
+              <div class="image-wrapper">
+                <img
+                  :src="getImageUrl(getCurrentWord())"
+                  :alt="getCurrentWord().en"
+                  class="word-image"
+                  @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
+                />
+                <div class="no-image" style="display: none;">
+                  <span class="no-image-icon">📝</span>
+                  <span class="no-image-text">{{ getCurrentWord()?.en }}</span>
+                </div>
+              </div>
+              <div class="word-info">
+                <div class="word-en">{{ getCurrentWord()?.en }}</div>
+                <div class="word-zh">{{ getCurrentWord()?.zh }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 下一个卡片 -->
+          <div class="side-card" @click="nextCard">
+            <div v-if="getNextWord()" class="mini-card">
+              <div class="image-wrapper">
+                <img
+                  :src="getImageUrl(getNextWord())"
+                  :alt="getNextWord().en"
+                  class="word-image"
+                  @error="(e) => { e.target.style.display = 'none'; }"
+                />
+              </div>
+              <div class="word-info">
+                <div class="word-en">{{ getNextWord()?.en }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <!-- 播放控制 -->
+      <div class="play-controls">
+        <button class="control-btn" @click="prevCard">⏮️</button>
+        <button class="play-toggle-btn" @click="togglePlay">
+          <span v-if="isPlaying">⏸️</span>
+          <span v-else>▶️</span>
+        </button>
+        <button class="control-btn" @click="nextCard">⏭️</button>
       </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <nav class="bottom-nav" v-if="currentPage !== 'play'">
+      <button
+        class="nav-item"
+        :class="{ active: currentPage === 'home' || currentPage === 'category' }"
+        @click="goToHome"
+      >
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </button>
+      <button
+        class="nav-item"
+        :class="{ active: currentPage === 'random' }"
+        @click="goToRandom"
+      >
+        <span class="nav-icon">🎲</span>
+        <span class="nav-label">随机</span>
+      </button>
     </nav>
-
-    <main class="main-content">
-      <div class="word-grid">
-        <div 
-          v-for="(word, index) in currentWords" 
-          :key="word.en"
-          class="word-card"
-          :class="{ playing: playingIndex === index }"
-          @click="playPronunciation(word, index)"
-        >
-          <div class="card-inner">
-            <div class="image-wrapper">
-              <img 
-                :src="getImageUrl(word)" 
-                :alt="word.en"
-                class="word-image"
-                loading="lazy"
-                @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
-              />
-              <div class="no-image" style="display: none;">
-                <span class="no-image-icon">📝</span>
-                <span class="no-image-text">{{ word.en }}</span>
-              </div>
-              <div class="play-overlay" v-if="playingIndex === index">
-                <span class="play-icon">🔊</span>
-              </div>
-            </div>
-            <div class="word-info">
-              <div class="word-en">{{ word.en }}</div>
-              <div class="word-zh">{{ word.zh }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
   </div>
 </template>
 
@@ -237,28 +439,47 @@ onUnmounted(() => {
 .app-container {
   min-height: 100vh;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 70px;
+  padding-bottom: env(safe-area-inset-bottom, 0) + 70px;
 }
 
-.app-header {
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  background: white;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   position: sticky;
   top: 0;
   z-index: 100;
-  background: white;
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.header-content {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.back-btn {
+  padding: 8px 12px;
+  border: none;
+  background: #f5f7fa;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.app-title {
-  font-size: 20px;
+.back-btn:hover {
+  background: #e4e7ed;
+}
+
+.page-title {
+  font-size: 18px;
   font-weight: 600;
   color: #303133;
   margin: 0;
@@ -268,133 +489,61 @@ onUnmounted(() => {
 }
 
 .title-icon {
-  font-size: 24px;
+  font-size: 22px;
 }
 
-.nav-toggle {
-  display: none;
-  padding: 8px 12px;
-  border: none;
-  background: #f5f7fa;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s;
+.home-content, .category-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
 }
 
-.nav-toggle:hover {
-  background: #e4e7ed;
+/* 分组和分类网格 */
+.group-grid, .category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
-.nav-menu {
-  position: sticky;
-  top: 60px;
-  z-index: 90;
+.group-card, .category-card {
   background: white;
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-}
-
-.nav-content {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 12px 16px;
-}
-
-.nav-section {
-  margin-bottom: 12px;
-}
-
-.nav-items {
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.nav-item {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: 1px solid #e4e7ed;
-  background: white;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.nav-item:hover {
-  border-color: #409eff;
-  color: #409eff;
-}
-
-.nav-item.active {
-  background: #409eff;
-  border-color: #409eff;
-  color: white;
-}
-
-.nav-icon {
-  font-size: 16px;
-}
-
-.category-tabs {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 12px;
-}
-
-.category-scroll {
-  display: flex;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.category-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.category-tab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: none;
-  background: #f5f7fa;
-  border-radius: 16px;
-  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  flex-shrink: 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.category-tab:hover {
-  background: #e4e7ed;
+.group-card:hover, .category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.category-tab.active {
-  background: #67c23a;
-  color: white;
+.group-icon, .category-icon {
+  font-size: 36px;
 }
 
-.tab-icon {
+.group-name, .category-name {
   font-size: 14px;
+  font-weight: 500;
+  color: #303133;
 }
 
-.main-content {
-  padding: 8px 12px 40px;
-  max-width: 600px;
-  margin: 0 auto;
+.category-count {
+  font-size: 12px;
+  color: #909399;
 }
 
+/* 单词卡片 */
 .word-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  padding-bottom: 80px;
 }
 
 .word-card {
@@ -404,11 +553,6 @@ onUnmounted(() => {
 
 .word-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.word-card.playing {
-  transform: scale(1.02);
 }
 
 .card-inner {
@@ -416,11 +560,6 @@ onUnmounted(() => {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s;
-}
-
-.word-card.playing .card-inner {
-  box-shadow: 0 4px 16px rgba(64, 158, 255, 0.2);
 }
 
 .image-wrapper {
@@ -464,39 +603,6 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-.play-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(64, 158, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 1s infinite;
-}
-
-.play-icon {
-  font-size: 32px;
-  animation: bounce 0.6s infinite alternate;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes bounce {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.2);
-  }
-}
-
 .word-info {
   padding: 12px;
   text-align: center;
@@ -515,55 +621,227 @@ onUnmounted(() => {
   color: #909399;
 }
 
+/* 播放开始按钮 */
+.play-start-btn {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 90;
+}
+
+.play-start-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 16px rgba(64, 158, 255, 0.5);
+}
+
+.play-btn-icon {
+  font-size: 20px;
+}
+
+/* 播放页面 */
+.play-page {
+  padding-bottom: 0;
+}
+
+.play-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+}
+
+.cards-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.side-card {
+  flex: 1;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.side-card:hover {
+  opacity: 0.7;
+}
+
+.mini-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.mini-card .image-wrapper {
+  aspect-ratio: 1;
+}
+
+.mini-card .word-info {
+  padding: 8px;
+}
+
+.mini-card .word-en {
+  font-size: 10px;
+}
+
+.main-card {
+  flex: 2;
+}
+
+.large-card-inner {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.large-card-inner .image-wrapper {
+  aspect-ratio: 1;
+}
+
+.large-card-inner .word-info {
+  padding: 16px;
+}
+
+.large-card-inner .word-en {
+  font-size: 20px;
+}
+
+.large-card-inner .word-zh {
+  font-size: 16px;
+}
+
+/* 播放控制 */
+.play-controls {
+  background: white;
+  padding: 16px;
+  border-top: 1px solid #e4e7ed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+}
+
+.control-btn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: #f5f7fa;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.control-btn:hover {
+  background: #e4e7ed;
+  transform: scale(1.1);
+}
+
+.play-toggle-btn {
+  width: 70px;
+  height: 70px;
+  border: none;
+  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.play-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(64, 158, 255, 0.5);
+}
+
+/* 底部导航 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  border-top: 1px solid #e4e7ed;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.bottom-nav .nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bottom-nav .nav-item:hover {
+  background: #f5f7fa;
+}
+
+.bottom-nav .nav-item.active {
+  color: #409eff;
+}
+
+.bottom-nav .nav-icon {
+  font-size: 24px;
+}
+
+.bottom-nav .nav-label {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 响应式 */
 @media (min-width: 500px) {
-  .word-grid {
+  .group-grid, .category-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
   
-  .word-en {
-    font-size: 15px;
-  }
-  
-  .word-zh {
-    font-size: 13px;
+  .word-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
   }
 }
 
 @media (min-width: 768px) {
-  .word-grid {
+  .group-grid, .category-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
   
-  .main-content {
-    padding: 16px 24px 40px;
-  }
-  
-  .nav-toggle {
-    display: none;
-  }
-}
-
-@media (max-width: 767px) {
-  .nav-toggle {
-    display: block;
-  }
-  
-  .nav-items {
-    display: none;
-  }
-  
-  .nav-menu.mobile-open .nav-items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 12px;
-    border-top: 1px solid #f0f0f0;
-  }
-  
-  .nav-menu.mobile-open .nav-section {
-    margin-bottom: 0;
+  .word-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
 }
 </style>
