@@ -52,7 +52,6 @@ function getImageUrl(word) {
 }
 
 function getAudioUrl(word) {
-  // 兼容 word 对象和字符串两种情况
   const wordStr = typeof word === 'string' ? word : word.en;
   return `/audio/${wordStr}.mp3`;
 }
@@ -63,9 +62,7 @@ function playPronunciation(word, index) {
   const wordParts = word.en.split('_');
   
   if (wordParts.length > 1) {
-    playWordParts(wordParts, 0, () => {
-      playingIndex.value = -1;
-    });
+    playWordPartsSequentially(wordParts, 0);
   } else {
     const audio = new Audio();
     audio.src = getAudioUrl(word.en);
@@ -84,35 +81,47 @@ function playPronunciation(word, index) {
   }
 }
 
-function playWordParts(parts, index, onComplete) {
-  if (index >= parts.length) {
-    onComplete();
+function playWordPartsSequentially(parts, currentIndex) {
+  if (currentIndex >= parts.length) {
+    playingIndex.value = -1;
     return;
   }
   
+  const part = parts[currentIndex];
   const audio = new Audio();
-  audio.src = getAudioUrl(parts[index]);
+  audio.src = getAudioUrl(part);
+  
+  let hasStarted = false;
+  
+  audio.oncanplay = () => {
+    if (!hasStarted) {
+      hasStarted = true;
+      audio.play().catch(() => {
+        setTimeout(() => {
+          playWordPartsSequentially(parts, currentIndex + 1);
+        }, 300);
+      });
+    }
+  };
   
   audio.onended = () => {
     setTimeout(() => {
-      playWordParts(parts, index + 1, onComplete);
-    }, 300);
+      playWordPartsSequentially(parts, currentIndex + 1);
+    }, 200);
   };
   
   audio.onerror = () => {
     setTimeout(() => {
-      playWordParts(parts, index + 1, onComplete);
-    }, 300);
+      playWordPartsSequentially(parts, currentIndex + 1);
+    }, 200);
   };
   
-  audio.play().catch(() => {
-    setTimeout(() => {
-      playWordParts(parts, index + 1, onComplete);
-    }, 300);
-  });
+  setTimeout(() => {
+    if (!hasStarted) {
+      playWordPartsSequentially(parts, currentIndex + 1);
+    }
+  }, 3000);
 }
-
-
 
 function handleKeyDown(e) {
   if (e.key === 'Escape') {
@@ -136,70 +145,56 @@ onUnmounted(() => {
   >
     <header class="app-header">
       <div class="header-content">
-        <div class="header-left">
-          <span class="logo">{{ currentGroupData?.icon || '📚' }}</span>
-          <div class="header-text">
-            <span class="app-name">看图学英语</span>
-            <span class="group-name">{{ currentGroupData?.groupName || '' }}</span>
-          </div>
-        </div>
-        <div class="header-right">
-          <span class="word-count">{{ totalWordsCount }} 词</span>
-          <button class="nav-toggle" @click="showMobileNav = !showMobileNav">
-            <span class="nav-icon">☰</span>
-          </button>
-        </div>
+        <h1 class="app-title">
+          <span class="title-icon">📚</span>
+          <span>Picture English</span>
+        </h1>
+        <button 
+          class="nav-toggle"
+          @click="showMobileNav = !showMobileNav"
+        >
+          <span v-if="!showMobileNav">☰</span>
+          <span v-else>✕</span>
+        </button>
       </div>
     </header>
 
-    <nav class="group-nav" :class="{ 'show': showMobileNav }">
-      <div class="nav-overlay" @click="showMobileNav = false"></div>
+    <nav 
+      class="nav-menu"
+      :class="{ 'mobile-open': showMobileNav }"
+    >
       <div class="nav-content">
-        <div class="nav-header">
-          <span>选择分类</span>
-          <button class="close-btn" @click="showMobileNav = false">✕</button>
+        <div class="nav-section">
+          <div class="nav-items">
+            <button
+              v-for="group in groupKeys"
+              :key="group"
+              class="nav-item"
+              :class="{ active: currentGroup === group }"
+              @click="switchGroup(group)"
+            >
+              <span class="nav-icon">{{ vocabularyData[group].icon }}</span>
+              <span class="nav-label">{{ vocabularyData[group].groupName }}</span>
+            </button>
+          </div>
         </div>
-        <div class="group-list">
-          <button
-            v-for="groupKey in groupKeys"
-            :key="groupKey"
-            class="group-item"
-            :class="{ active: currentGroup === groupKey }"
-            @click="switchGroup(groupKey); showMobileNav = false"
-          >
-            <span class="group-icon">{{ vocabularyData[groupKey].icon }}</span>
-            <span class="group-name-text">{{ vocabularyData[groupKey].groupName }}</span>
-            <span class="group-count">
-              {{ Object.keys(vocabularyData[groupKey].categories).length }} 个分类
-            </span>
-          </button>
+        
+        <div class="category-tabs" v-if="currentGroupData">
+          <div class="category-scroll">
+            <button
+              v-for="catKey in categoryKeys"
+              :key="catKey"
+              class="category-tab"
+              :class="{ active: currentCategory === catKey }"
+              @click="switchCategory(catKey)"
+            >
+              <span class="tab-icon">{{ currentGroupData.categories[catKey].icon }}</span>
+              <span class="tab-label">{{ currentGroupData.categories[catKey].name }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </nav>
-
-    <div class="category-tabs">
-      <div class="tabs-scroll">
-        <button 
-          v-for="catKey in categoryKeys" 
-          :key="catKey"
-          class="tab-item"
-          :class="{ active: currentCategory === catKey }"
-          @click="switchCategory(catKey)"
-        >
-          <span class="tab-icon">{{ currentGroupData?.categories[catKey]?.icon }}</span>
-          <span class="tab-text">{{ currentGroupData?.categories[catKey]?.name }}</span>
-          <span class="tab-count">{{ currentGroupData?.categories[catKey]?.words?.length }}</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="category-info">
-      <span class="category-title">
-        {{ currentGroupData?.categories[currentCategory]?.icon }}
-        {{ currentGroupData?.categories[currentCategory]?.name }}
-      </span>
-      <span class="category-subtitle">点击卡片听发音</span>
-    </div>
 
     <main class="main-content">
       <div class="word-grid">
@@ -235,314 +230,159 @@ onUnmounted(() => {
         </div>
       </div>
     </main>
-
-
   </div>
 </template>
 
 <style scoped>
-* {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-}
-
 .app-container {
-  max-width: 100%;
-  margin: 0 auto;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
   min-height: 100vh;
-  padding-bottom: env(safe-area-inset-bottom);
-  user-select: none;
-  overflow-x: hidden;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 }
 
 .app-header {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  padding: 12px 16px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  background: white;
+  border-bottom: 1px solid #e4e7ed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   max-width: 600px;
   margin: 0 auto;
-}
-
-.header-left {
+  padding: 16px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
 }
 
-.logo {
-  font-size: 32px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-.header-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.app-name {
-  font-size: 18px;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.group-name {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.header-right {
+.app-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.word-count {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  color: #ffffff;
-  font-weight: 500;
+.title-icon {
+  font-size: 24px;
 }
 
 .nav-toggle {
-  width: 40px;
-  height: 40px;
+  display: none;
+  padding: 8px 12px;
   border: none;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  font-size: 20px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+  transition: background 0.2s;
 }
 
-.nav-toggle:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.3);
+.nav-toggle:hover {
+  background: #e4e7ed;
 }
 
-.group-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 200;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.group-nav.show {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.nav-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+.nav-menu {
+  position: sticky;
+  top: 60px;
+  z-index: 90;
+  background: white;
+  border-bottom: 1px solid #e4e7ed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .nav-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 85%;
-  max-width: 320px;
-  height: 100%;
-  background: #ffffff;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow-y: auto;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px 16px;
 }
 
-.group-nav.show .nav-content {
-  transform: translateX(0);
+.nav-section {
+  margin-bottom: 12px;
 }
 
-.nav-header {
+.nav-items {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 16px;
-  border-bottom: 1px solid #eef2f7;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.close-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
+.nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.group-list {
-  padding: 12px;
-}
-
-.group-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border: none;
-  border-radius: 12px;
-  background: #f8fafc;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid #e4e7ed;
+  background: white;
+  border-radius: 20px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 8px;
-  text-align: left;
+  white-space: nowrap;
 }
 
-.group-item:active {
-  transform: scale(0.98);
-  background: #eef2f7;
+.nav-item:hover {
+  border-color: #409eff;
+  color: #409eff;
 }
 
-.group-item.active {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  color: #ffffff;
+.nav-item.active {
+  background: #409eff;
+  border-color: #409eff;
+  color: white;
 }
 
-.group-icon {
-  font-size: 28px;
-}
-
-.group-name-text {
-  flex: 1;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.group-count {
-  font-size: 11px;
-  color: #909399;
-  background: #eef2f7;
-  padding: 4px 8px;
-  border-radius: 10px;
-}
-
-.group-item.active .group-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+.nav-icon {
+  font-size: 16px;
 }
 
 .category-tabs {
-  background: #ffffff;
-  padding: 10px 0;
-  position: sticky;
-  top: 60px;
-  z-index: 99;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
 }
 
-.tabs-scroll {
+.category-scroll {
   display: flex;
   gap: 8px;
-  padding: 0 12px;
   overflow-x: auto;
+  padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
 }
 
-.tabs-scroll::-webkit-scrollbar {
+.category-scroll::-webkit-scrollbar {
   display: none;
 }
 
-.tab-item {
+.category-tab {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 10px 14px;
+  gap: 6px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 12px;
   background: #f5f7fa;
+  border-radius: 16px;
+  font-size: 13px;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.2s;
-  min-width: 70px;
-  scroll-snap-align: start;
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
-.tab-item:active {
-  transform: scale(0.95);
+.category-tab:hover {
+  background: #e4e7ed;
 }
 
-.tab-item.active {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+.category-tab.active {
+  background: #67c23a;
+  color: white;
 }
 
 .tab-icon {
-  font-size: 22px;
-}
-
-.tab-text {
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.tab-count {
-  font-size: 10px;
-  background: rgba(0, 0, 0, 0.08);
-  padding: 2px 6px;
-  border-radius: 8px;
-}
-
-.tab-item.active .tab-count {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.category-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.category-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.category-subtitle {
-  font-size: 12px;
-  color: #909399;
+  font-size: 14px;
 }
 
 .main-content {
@@ -554,36 +394,33 @@ onUnmounted(() => {
 .word-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .word-card {
-  background: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.word-card:active {
-  transform: scale(0.97);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+.word-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .word-card.playing {
-  animation: pulse 0.5s ease;
-  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
+  transform: scale(1.02);
 }
 
 .card-inner {
-  display: flex;
-  flex-direction: column;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s;
+}
+
+.word-card.playing .card-inner {
+  box-shadow: 0 4px 16px rgba(64, 158, 255, 0.2);
 }
 
 .image-wrapper {
@@ -623,37 +460,45 @@ onUnmounted(() => {
   transition: transform 0.3s;
 }
 
-.word-card:active .word-image {
+.word-card:hover .word-image {
   transform: scale(1.05);
 }
 
 .play-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 107, 53, 0.9);
+  background: rgba(64, 158, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.15s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  animation: pulse 1s infinite;
 }
 
 .play-icon {
-  font-size: 36px;
-  animation: bounce 0.4s ease infinite alternate;
+  font-size: 32px;
+  animation: bounce 0.6s infinite alternate;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes bounce {
-  from { transform: scale(1); }
-  to { transform: scale(1.15); }
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
 }
 
 .word-info {
-  padding: 10px;
+  padding: 12px;
   text-align: center;
 }
 
@@ -661,8 +506,8 @@ onUnmounted(() => {
   font-size: 14px;
   font-weight: 600;
   color: #303133;
-  margin-bottom: 2px;
-  line-height: 1.3;
+  margin-bottom: 4px;
+  word-break: break-word;
 }
 
 .word-zh {
@@ -697,6 +542,28 @@ onUnmounted(() => {
   
   .nav-toggle {
     display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-toggle {
+    display: block;
+  }
+  
+  .nav-items {
+    display: none;
+  }
+  
+  .nav-menu.mobile-open .nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .nav-menu.mobile-open .nav-section {
+    margin-bottom: 0;
   }
 }
 </style>
