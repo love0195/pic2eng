@@ -883,7 +883,13 @@
     "each",
     "every",
     "birthday",
-    "wedding"
+    "wedding",
+    "anniversary",
+    "festival",
+    "holiday",
+    "christmas",
+    "new_year",
+    "mid_autumn"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1648,7 +1654,10 @@
     "each",
     "every",
     "birthday",
-    "wedding"
+    "wedding",
+    "anniversary",
+    "festival",
+    "holiday"
   ],
   "failed_images": [
     "plain",
@@ -1666,7 +1675,12 @@
     "october",
     "november",
     "december",
-    "lot"
+    "lot",
+    "halloween",
+    "thanksgiving",
+    "easter",
+    "valentine",
+    "spring_festival"
   ],
   "failed_audio": [
     "sofa_bed",
@@ -1805,7 +1819,15 @@
     "september",
     "october",
     "november",
-    "december"
+    "december",
+    "christmas",
+    "halloween",
+    "thanksgiving",
+    "easter",
+    "valentine",
+    "new_year",
+    "spring_festival",
+    "mid_autumn"
   ],
   "current_group": 0
 }
