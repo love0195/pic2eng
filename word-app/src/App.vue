@@ -52,40 +52,74 @@ function getImageUrl(word) {
 }
 
 function getAudioUrl(word) {
-  return `/audio/${word.en}.mp3`;
+  // 兼容 word 对象和字符串两种情况
+  const wordStr = typeof word === 'string' ? word : word.en;
+  return `/audio/${wordStr}.mp3`;
 }
 
 function playPronunciation(word, index) {
   playingIndex.value = index;
   
-  const wordParts = word.en.split('_');
+  // 先尝试直接播放完整单词的音频
+  const audio = new Audio();
+  audio.src = getAudioUrl(word.en);
   
-  async function playParts() {
-    for (let i = 0; i < wordParts.length; i++) {
-      const part = wordParts[i];
-      const audio = new Audio();
-      audio.src = getAudioUrl(part);
-      
-      await new Promise((resolve) => {
-        audio.onended = resolve;
-        audio.onerror = resolve;
-        audio.play().catch(resolve);
-        
-        setTimeout(() => resolve(), 2000);
-      });
-      
-      if (i < wordParts.length - 1) {
-        await new Promise(r => setTimeout(r, 300));
-      }
-    }
+  audio.onended = () => {
     playingIndex.value = -1;
+  };
+  
+  audio.onerror = (e) => {
+    console.log(`无法播放 ${word.en}.mp3，尝试拆分播放`);
+    // 如果完整单词播放失败，尝试拆分播放
+    const wordParts = word.en.split('_');
+    if (wordParts.length > 1) {
+      playWordParts(wordParts, 0, () => {
+        playingIndex.value = -1;
+      });
+    } else {
+      playingIndex.value = -1;
+    }
+  };
+  
+  audio.play().catch((err) => {
+    console.log(`播放失败: ${err}`);
+    const wordParts = word.en.split('_');
+    if (wordParts.length > 1) {
+      playWordParts(wordParts, 0, () => {
+        playingIndex.value = -1;
+      });
+    } else {
+      playingIndex.value = -1;
+    }
+  });
+}
+
+function playWordParts(parts, index, onComplete) {
+  if (index >= parts.length) {
+    onComplete();
+    return;
   }
   
-  playParts();
+  const audio = new Audio();
+  audio.src = getAudioUrl(parts[index]);
   
-  setTimeout(() => {
-    playingIndex.value = -1;
-  }, 2000 * wordParts.length + 500);
+  audio.onended = () => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  };
+  
+  audio.onerror = () => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  };
+  
+  audio.play().catch(() => {
+    setTimeout(() => {
+      playWordParts(parts, index + 1, onComplete);
+    }, 200);
+  });
 }
 
 
