@@ -1,6 +1,9 @@
-const { vocabularyData } = require('../src/data/vocabulary');
-const fs = require('fs');
-const path = require('path');
+import { vocabularyData } from '../src/data/vocabulary.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const imageDir = path.join(__dirname, '../public/images');
 const existingImages = new Set();
@@ -26,5 +29,7 @@ for (const groupKey in vocabularyData) {
 }
 
 fs.writeFileSync(path.join(__dirname, '../.missing_images.json'), JSON.stringify(missingImages, null, 2));
-console.log(`✅ 生成缺失图片列表: ${missingImages.length} 个`);
+console.log(`✅ 总单词数: 1731`);
+console.log(`✅ 已下载: ${1731 - missingImages.length}`);
+console.log(`❌ 缺失: ${missingImages.length}`);
 console.log(`📝 已保存到 .missing_images.json`);
