@@ -901,7 +901,15 @@
     "calendar",
     "clock",
     "alarm",
-    "red"
+    "red",
+    "blue",
+    "pink",
+    "brown",
+    "black",
+    "gold",
+    "silver",
+    "cyan",
+    "navy"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1679,7 +1687,19 @@
     "clock",
     "alarm",
     "red",
-    "yellow"
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "pink",
+    "brown",
+    "black",
+    "white",
+    "gray",
+    "gold",
+    "silver",
+    "cyan",
+    "navy"
   ],
   "failed_images": [
     "plain",
@@ -1709,7 +1729,11 @@
     "national_day",
     "children_day",
     "father_day",
-    "yellow"
+    "yellow",
+    "green",
+    "purple",
+    "white",
+    "gray"
   ],
   "failed_audio": [
     "sofa_bed",

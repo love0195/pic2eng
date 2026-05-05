@@ -979,7 +979,9 @@
     "rough",
     "transparent",
     "opaque",
-    "crescent"
+    "crescent",
+    "flexible",
+    "arrow"
   ],
   "failed": [
     "moisturizer",
@@ -1009,13 +1011,11 @@
     "line",
     "edge",
     "quarter",
-    "arrow",
     "smooth",
     "hard",
     "dull",
     "soft",
     "rigid",
-    "flexible",
     "thick",
     "thin",
     "heavy",
