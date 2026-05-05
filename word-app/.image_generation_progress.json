@@ -918,7 +918,10 @@
     "New_Year",
     "Mid_Autumn",
     "Valentine",
-    "November"
+    "November",
+    "Lantern_Festival",
+    "Labor_Day",
+    "National_Day"
   ],
   "failed": [
     "moisturizer",
@@ -936,9 +939,6 @@
     "billion",
     "Dragon_Boat",
     "midnight",
-    "Lantern_Festival",
-    "Labor_Day",
-    "National_Day",
     "Children_Day",
     "Mother_Day",
     "Father_Day",
