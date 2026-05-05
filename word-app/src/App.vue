@@ -3,7 +3,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { vocabularyData } from './data/vocabulary';
 
 const currentGroup = ref(Object.keys(vocabularyData)[0]);
-const currentCategory = ref('');
 const playingIndex = ref(-1);
 const showMobileNav = ref(false);
 const touchStartX = ref(0);
@@ -13,15 +12,15 @@ const groupKeys = computed(() => Object.keys(vocabularyData));
 
 const currentGroupData = computed(() => vocabularyData[currentGroup.value]);
 
-const categoryKeys = computed(() => {
-  if (!currentGroupData.value) return [];
-  return Object.keys(currentGroupData.value.categories);
-});
-
 const currentWords = computed(() => {
-  if (!currentCategory.value || !currentGroupData.value) return [];
-  const category = currentGroupData.value.categories[currentCategory.value];
-  return category ? category.words : [];
+  if (!currentGroupData.value) return [];
+  const allWords = [];
+  Object.values(currentGroupData.value.categories).forEach(category => {
+    category.words.forEach(word => {
+      allWords.push(word);
+    });
+  });
+  return allWords;
 });
 
 const totalWordsCount = computed(() => {
@@ -30,21 +29,9 @@ const totalWordsCount = computed(() => {
     .reduce((sum, cat) => sum + cat.words.length, 0);
 });
 
-function initCategory() {
-  if (categoryKeys.value.length > 0 && !currentCategory.value) {
-    currentCategory.value = categoryKeys.value[0];
-  }
-}
-
 function switchGroup(groupKey) {
   currentGroup.value = groupKey;
-  currentCategory.value = '';
-  initCategory();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function switchCategory(categoryKey) {
-  currentCategory.value = categoryKey;
+  showMobileNav.value = false;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -121,7 +108,6 @@ function handleKeyDown(e) {
 }
 
 onMounted(() => {
-  initCategory();
   document.addEventListener('keydown', handleKeyDown);
 });
 
