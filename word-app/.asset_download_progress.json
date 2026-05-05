@@ -940,7 +940,8 @@
     "arrow",
     "crescent",
     "parallelogram",
-    "rough"
+    "rough",
+    "shiny"
   ],
   "downloaded_audio": [
     "sofa",
@@ -1771,7 +1772,10 @@
     "parallelogram",
     "octagon",
     "smooth",
-    "rough"
+    "rough",
+    "soft",
+    "hard",
+    "shiny"
   ],
   "failed_images": [
     "plain",
@@ -1819,7 +1823,9 @@
     "quarter",
     "cross",
     "octagon",
-    "smooth"
+    "smooth",
+    "soft",
+    "hard"
   ],
   "failed_audio": [
     "sofa_bed",
