@@ -982,7 +982,10 @@
     "crescent",
     "flexible",
     "arrow",
-    "dull"
+    "dull",
+    "rectangle",
+    "heavy",
+    "wet"
   ],
   "failed": [
     "moisturizer",
@@ -1008,7 +1011,6 @@
     "light_pink",
     "light_blue",
     "square",
-    "rectangle",
     "line",
     "edge",
     "quarter",
@@ -1018,8 +1020,6 @@
     "rigid",
     "thick",
     "thin",
-    "heavy",
-    "wet",
     "light",
     "sticky",
     "dry",
