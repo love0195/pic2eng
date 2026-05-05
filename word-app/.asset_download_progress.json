@@ -14,7 +14,22 @@
     "stool",
     "mirror",
     "pillow",
-    "blanket"
+    "blanket",
+    "curtain",
+    "carpet",
+    "cushion",
+    "sofa_bed",
+    "nightstand",
+    "armchair",
+    "rocking_chair",
+    "dining_table",
+    "coffee_table",
+    "dressing_table",
+    "chest_of_drawers",
+    "tv_stand",
+    "shelving_unit",
+    "bench",
+    "hammock"
   ],
   "downloaded_audio": [
     "sofa",
@@ -31,9 +46,25 @@
     "stool",
     "mirror",
     "pillow",
-    "blanket"
+    "blanket",
+    "curtain",
+    "carpet",
+    "cushion",
+    "nightstand",
+    "armchair",
+    "bench",
+    "hammock"
   ],
   "failed_images": [],
-  "failed_audio": [],
+  "failed_audio": [
+    "sofa_bed",
+    "rocking_chair",
+    "dining_table",
+    "coffee_table",
+    "dressing_table",
+    "chest_of_drawers",
+    "tv_stand",
+    "shelving_unit"
+  ],
   "current_group": 0
 }
