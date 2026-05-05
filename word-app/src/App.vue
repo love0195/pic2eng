@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { vocabularyData } from './data/vocabulary';
 
 const currentGroup = ref(Object.keys(vocabularyData)[0]);
+const currentCategory = ref('');
 const playingIndex = ref(-1);
 const showMobileNav = ref(false);
 const touchStartX = ref(0);
@@ -12,15 +13,15 @@ const groupKeys = computed(() => Object.keys(vocabularyData));
 
 const currentGroupData = computed(() => vocabularyData[currentGroup.value]);
 
-const currentWords = computed(() => {
+const categoryKeys = computed(() => {
   if (!currentGroupData.value) return [];
-  const allWords = [];
-  Object.values(currentGroupData.value.categories).forEach(category => {
-    category.words.forEach(word => {
-      allWords.push(word);
-    });
-  });
-  return allWords;
+  return Object.keys(currentGroupData.value.categories);
+});
+
+const currentWords = computed(() => {
+  if (!currentCategory.value || !currentGroupData.value) return [];
+  const category = currentGroupData.value.categories[currentCategory.value];
+  return category ? category.words : [];
 });
 
 const totalWordsCount = computed(() => {
@@ -29,9 +30,22 @@ const totalWordsCount = computed(() => {
     .reduce((sum, cat) => sum + cat.words.length, 0);
 });
 
+function initCategory() {
+  if (categoryKeys.value.length > 0 && !currentCategory.value) {
+    currentCategory.value = categoryKeys.value[0];
+  }
+}
+
 function switchGroup(groupKey) {
   currentGroup.value = groupKey;
+  currentCategory.value = '';
+  initCategory();
   showMobileNav.value = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchCategory(categoryKey) {
+  currentCategory.value = categoryKey;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -108,6 +122,7 @@ function handleKeyDown(e) {
 }
 
 onMounted(() => {
+  initCategory();
   document.addEventListener('keydown', handleKeyDown);
 });
 
@@ -197,7 +212,7 @@ onUnmounted(() => {
           :key="word.en"
           class="word-card"
           :class="{ playing: playingIndex === index }"
-          @click.stop.prevent="playPronunciation(word, index)"
+          @click="playPronunciation(word, index)"
         >
           <div class="card-inner">
             <div class="image-wrapper">
@@ -206,7 +221,12 @@ onUnmounted(() => {
                 :alt="word.en"
                 class="word-image"
                 loading="lazy"
+                @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
               />
+              <div class="no-image" style="display: none;">
+                <span class="no-image-icon">📝</span>
+                <span class="no-image-text">{{ word.en }}</span>
+              </div>
               <div class="play-overlay" v-if="playingIndex === index">
                 <span class="play-icon">🔊</span>
               </div>
@@ -581,6 +601,28 @@ onUnmounted(() => {
   aspect-ratio: 1;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
   overflow: hidden;
+}
+
+.no-image {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  color: #909399;
+}
+
+.no-image-icon {
+  font-size: 48px;
+}
+
+.no-image-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
 .word-image {
