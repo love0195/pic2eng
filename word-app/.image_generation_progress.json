@@ -985,7 +985,10 @@
     "dull",
     "rectangle",
     "heavy",
-    "wet"
+    "wet",
+    "dry",
+    "spiky",
+    "sticky"
   ],
   "failed": [
     "moisturizer",
@@ -1021,10 +1024,7 @@
     "thick",
     "thin",
     "light",
-    "sticky",
-    "dry",
     "slippery",
-    "spiky",
     "bumpy",
     "flat",
     "curved",
