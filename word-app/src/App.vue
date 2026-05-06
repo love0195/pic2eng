@@ -19,12 +19,6 @@ let playTimer = null;
 const debugMode = ref(false);
 const badImages = ref([]);
 
-// 重新生成状态
-const regenerating = ref(false);
-const regenerationLog = ref([]);
-const regenerationProgress = ref(0);
-const regenerationTotal = ref(0);
-
 const groupKeys = computed(() => Object.keys(vocabularyData));
 
 async function loadBadImages() {
@@ -300,44 +294,6 @@ function toggleDebugMode() {
   debugMode.value = !debugMode.value;
 }
 
-async function startRegenerate() {
-  try {
-    const response = await fetch('/api/regenerate', { method: 'POST' });
-    const result = await response.json();
-    if (result.success) {
-      regenerating.value = true;
-      regenerationLog.value = ['🚀 开始重新生成...'];
-      pollRegenerationStatus();
-    }
-  } catch (e) {
-    console.error('启动重新生成失败:', e);
-  }
-}
-
-async function pollRegenerationStatus() {
-  const pollInterval = setInterval(async () => {
-    try {
-      const response = await fetch('/api/regenerate/status');
-      const result = await response.json();
-      if (result.success) {
-        const status = result.data;
-        regenerating.value = status.running;
-        regenerationProgress.value = status.progress;
-        regenerationTotal.value = status.total;
-        regenerationLog.value = status.log;
-        
-        if (!status.running) {
-          clearInterval(pollInterval);
-          loadBadImages(); // 重新加载标记列表
-        }
-      }
-    } catch (e) {
-      console.error('获取状态失败:', e);
-      clearInterval(pollInterval);
-    }
-  }, 1000);
-}
-
 onMounted(() => {
   loadBadImages();
 });
@@ -572,38 +528,11 @@ onUnmounted(() => {
           <span>📝</span>
           <span>待审核图片</span>
         </h1>
-        <div class="header-actions">
-          <span class="bad-count">{{ badImages.length }} 个</span>
-          <button 
-            v-if="badImages.length > 0 && !regenerating" 
-            class="regenerate-btn" 
-            @click="startRegenerate"
-          >
-            🔄 重新生成
-          </button>
-        </div>
+        <span class="bad-count">{{ badImages.length }} 个</span>
       </header>
       
       <main class="debug-content">
-        <!-- 重新生成进度 -->
-        <div v-if="regenerating" class="regeneration-progress">
-          <div class="progress-bar">
-            <div 
-              class="progress-fill" 
-              :style="{ width: (regenerationTotal > 0 ? (regenerationProgress / regenerationTotal * 100) : 0) + '%' }"
-            ></div>
-          </div>
-          <p class="progress-text">
-            {{ regenerationProgress }} / {{ regenerationTotal }}
-          </p>
-          <div class="regeneration-log">
-            <div v-for="(line, i) in regenerationLog" :key="i" class="log-line">
-              {{ line }}
-            </div>
-          </div>
-        </div>
-        
-        <div v-else-if="badImages.length === 0" class="empty-state">
+        <div v-if="badImages.length === 0" class="empty-state">
           <span class="empty-icon">✅</span>
           <p>没有待审核的图片</p>
           <p class="empty-hint">在调试模式下点击图片右上角的⚠️按钮标记不合适的图片</p>
@@ -1235,67 +1164,5 @@ onUnmounted(() => {
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
-}
-
-/* 重新生成按钮 */
-.regenerate-btn {
-  padding: 8px 16px;
-  border: none;
-  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
-  color: white;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.regenerate-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
-}
-
-/* 重新生成进度 */
-.regeneration-progress {
-  padding: 20px;
-  background: white;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 24px;
-  background: #f5f7fa;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #409eff 0%, #67c23a 100%);
-  transition: width 0.3s;
-}
-
-.progress-text {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0 0 12px 0;
-  text-align: center;
-}
-
-.regeneration-log {
-  max-height: 300px;
-  overflow-y: auto;
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.log-line {
-  font-size: 12px;
-  color: #64748b;
-  padding: 4px 0;
-  font-family: monospace;
 }
 </style>
