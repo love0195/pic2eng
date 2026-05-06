@@ -19,9 +19,47 @@ def get_prompt_for_word(word_en, word_zh, category):
     
     word_clean = word_en.replace("_", " ")
     
-    # 身体部位 - 使用解剖学风格的提示词
+    # 身体部位 - 使用真实照片风格
     if category == "身体部位" or category == "body_parts":
-        return f"human {word_clean}, anatomical illustration, medical diagram, educational, clear outline, white background, realistic style"
+        # 特殊处理手指/脚趾
+        if word_en == "finger":
+            return "close-up of human hand with all 5 fingers, palm up, real photograph, natural skin tone, no shoes, no gloves, white background, professional medical photography"
+        elif word_en == "toe":
+            return "close-up of human foot with all 5 toes, top view, real photograph, natural skin tone, no shoes, no socks, white background, professional medical photography"
+        elif word_en == "hand":
+            return "close-up of human hand, palm up, 5 fingers, real photograph, natural skin tone, no shoes, no gloves, white background, professional photography"
+        elif word_en == "foot":
+            return "close-up of human foot, top view, 5 toes, real photograph, natural skin tone, no shoes, no socks, white background, professional photography"
+        elif word_en == "elbow":
+            return "close-up of human elbow, arm bent, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "knee":
+            return "close-up of human knee, leg slightly bent, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "skin":
+            return "close-up of human skin texture, smooth healthy skin, real photograph, natural skin tone, white background, professional skin photography"
+        elif word_en == "thumb":
+            return "close-up of human thumb, part of hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "index_finger":
+            return "close-up of human index finger pointing, part of hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "middle_finger":
+            return "close-up of human middle finger, part of hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "ring_finger":
+            return "close-up of human ring finger, part of hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "little_finger":
+            return "close-up of human little finger (pinky), part of hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "palm":
+            return "close-up of human palm, hand open, 5 fingers, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "wrist":
+            return "close-up of human wrist, part of forearm and hand, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "ankle":
+            return "close-up of human ankle, part of leg and foot, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "heel":
+            return "close-up of human heel, bottom view of foot, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "arch":
+            return "close-up of human foot arch, side view of foot, real photograph, natural skin tone, white background, professional photography"
+        elif word_en == "knuckle":
+            return "close-up of human knuckles, closed fist, real photograph, natural skin tone, white background, professional photography"
+        else:
+            return f"close-up of human {word_clean}, real photograph, natural skin tone, no shoes, no accessories, white background, professional photography"
     
     # 内脏器官 - 使用医学解剖风格
     if category == "内脏器官" or category == "internal_organs":
@@ -44,15 +82,15 @@ def get_prompt_for_word(word_en, word_zh, category):
     if category == "形状" or category == "shapes":
         return f"{word_clean} shape, geometric figure, clean lines, white background, educational"
     
-    # 动物 - 使用真实动物图片
+    # 动物 - 使用真实动物照片
     if category == "动物" or category == "animals":
         return f"{word_clean}, real animal, nature photography, white background, clear view"
     
-    # 水果 - 使用真实水果图片
+    # 水果 - 使用真实水果照片
     if category == "水果" or category == "fruits":
         return f"{word_clean}, fresh fruit, real photography, white background, appetizing"
     
-    # 蔬菜 - 使用真实蔬菜图片
+    # 蔬菜 - 使用真实蔬菜照片
     if category == "蔬菜" or category == "vegetables":
         return f"{word_clean}, fresh vegetable, real photography, white background, healthy"
     
