@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { vocabularyData } from './data/vocabulary';
 
 // 页面状态
-const currentPage = ref('home'); // 'home', 'random', 'category', 'play'
+const currentPage = ref('home'); // 'home', 'random', 'category', 'play', 'debug'
 
 // 分类选择
 const selectedGroup = ref(null);
@@ -15,7 +15,26 @@ const currentPlayIndex = ref(0);
 const playWords = ref([]);
 let playTimer = null;
 
+// 调试模式
+const debugMode = ref(false);
+const badImages = ref([]);
+
 const groupKeys = computed(() => Object.keys(vocabularyData));
+
+function loadBadImages() {
+  try {
+    const saved = localStorage.getItem('badImages');
+    if (saved) {
+      badImages.value = JSON.parse(saved);
+    }
+  } catch (e) {
+    badImages.value = [];
+  }
+}
+
+function saveBadImages() {
+  localStorage.setItem('badImages', JSON.stringify(badImages.value));
+}
 
 function getAllCategories() {
   const categories = [];
@@ -61,6 +80,10 @@ function goToRandom() {
   selectedGroup.value = randomCat.groupKey;
   selectedCategory.value = randomCat;
   currentPage.value = 'category';
+}
+
+function goToDebug() {
+  currentPage.value = 'debug';
 }
 
 function selectGroup(groupKey) {
@@ -118,11 +141,9 @@ function startAutoPlay() {
   
   const word = playWords.value[currentPlayIndex.value];
   
-  // 播放3遍，每遍间隔0.5秒
   let playCount = 0;
   const playNext = () => {
     if (playCount >= 3) {
-      // 播放完3遍后，停留2秒，然后下一张
       playTimer = setTimeout(() => {
         if (isPlaying.value) {
           nextCard();
@@ -233,6 +254,37 @@ function getCurrentWord() {
   return playWords.value[currentPlayIndex.value];
 }
 
+function markBadImage(word, zh, group, category) {
+  const existing = badImages.value.find(item => item.en === word);
+  if (!existing) {
+    badImages.value.push({
+      en: word,
+      zh: zh,
+      group: group,
+      category: category,
+      markedAt: new Date().toISOString()
+    });
+    saveBadImages();
+  }
+}
+
+function removeBadImage(word) {
+  badImages.value = badImages.value.filter(item => item.en !== word);
+  saveBadImages();
+}
+
+function isBadImage(word) {
+  return badImages.value.some(item => item.en === word);
+}
+
+function toggleDebugMode() {
+  debugMode.value = !debugMode.value;
+}
+
+onMounted(() => {
+  loadBadImages();
+});
+
 onUnmounted(() => {
   stopPlay();
 });
@@ -240,6 +292,11 @@ onUnmounted(() => {
 
 <template>
   <div class="app-container">
+    <!-- 调试模式指示器 -->
+    <div v-if="debugMode" class="debug-indicator">
+      <span>🔧 调试模式</span>
+    </div>
+    
     <!-- 首页 -->
     <div v-if="currentPage === 'home'" class="page-content">
       <header class="page-header">
@@ -247,10 +304,17 @@ onUnmounted(() => {
           <span class="title-icon">📚</span>
           <span>Picture English</span>
         </h1>
+        <div class="header-actions">
+          <button class="debug-toggle-btn" @click="toggleDebugMode">
+            {{ debugMode ? '关闭调试' : '调试模式' }}
+          </button>
+          <button v-if="badImages.length > 0" class="bad-images-btn" @click="goToDebug">
+            📝 待审核 ({{ badImages.length }})
+          </button>
+        </div>
       </header>
       
       <main class="home-content">
-        <!-- 如果没选分组，显示分组 -->
         <div v-if="!selectedGroup" class="group-grid">
           <div
             v-for="groupKey in groupKeys"
@@ -263,7 +327,6 @@ onUnmounted(() => {
           </div>
         </div>
         
-        <!-- 如果选了分组，显示该分组的分类 -->
         <div v-else class="category-page">
           <button class="back-btn" @click="selectedGroup = null">
             <span>← 返回</span>
@@ -320,6 +383,16 @@ onUnmounted(() => {
                   <span class="no-image-icon">📝</span>
                   <span class="no-image-text">{{ word.en }}</span>
                 </div>
+                <!-- 调试模式下显示标记按钮 -->
+                <button
+                  v-if="debugMode"
+                  class="mark-bad-btn"
+                  :class="{ marked: isBadImage(word.en) }"
+                  @click.stop="markBadImage(word.en, word.zh, selectedCategory?.name, selectedCategory?.name)"
+                  :title="isBadImage(word.en) ? '已标记不合适' : '标记为不合适'"
+                >
+                  {{ isBadImage(word.en) ? '✓' : '⚠️' }}
+                </button>
               </div>
               <div class="word-info">
                 <div class="word-en">{{ word.en }}</div>
@@ -342,7 +415,6 @@ onUnmounted(() => {
       
       <main class="play-content">
         <div class="cards-container">
-          <!-- 上一个卡片 -->
           <div class="side-card" @click="prevCard">
             <div v-if="getPrevWord()" class="mini-card">
               <div class="image-wrapper">
@@ -352,6 +424,14 @@ onUnmounted(() => {
                   class="word-image"
                   @error="(e) => { e.target.style.display = 'none'; }"
                 />
+                <button
+                  v-if="debugMode"
+                  class="mark-bad-btn small"
+                  :class="{ marked: isBadImage(getPrevWord()?.en) }"
+                  @click.stop="markBadImage(getPrevWord()?.en, getPrevWord()?.zh, '', '')"
+                >
+                  {{ isBadImage(getPrevWord()?.en) ? '✓' : '⚠️' }}
+                </button>
               </div>
               <div class="word-info">
                 <div class="word-en">{{ getPrevWord()?.en }}</div>
@@ -359,7 +439,6 @@ onUnmounted(() => {
             </div>
           </div>
           
-          <!-- 当前卡片 -->
           <div class="main-card">
             <div v-if="getCurrentWord()" class="large-card-inner">
               <div class="image-wrapper">
@@ -373,6 +452,15 @@ onUnmounted(() => {
                   <span class="no-image-icon">📝</span>
                   <span class="no-image-text">{{ getCurrentWord()?.en }}</span>
                 </div>
+                <button
+                  v-if="debugMode"
+                  class="mark-bad-btn large"
+                  :class="{ marked: isBadImage(getCurrentWord()?.en) }"
+                  @click.stop="markBadImage(getCurrentWord()?.en, getCurrentWord()?.zh, '', '')"
+                  :title="isBadImage(getCurrentWord()?.en) ? '已标记不合适' : '标记为不合适'"
+                >
+                  {{ isBadImage(getCurrentWord()?.en) ? '✓' : '⚠️' }}
+                </button>
               </div>
               <div class="word-info">
                 <div class="word-en">{{ getCurrentWord()?.en }}</div>
@@ -381,7 +469,6 @@ onUnmounted(() => {
             </div>
           </div>
           
-          <!-- 下一个卡片 -->
           <div class="side-card" @click="nextCard">
             <div v-if="getNextWord()" class="mini-card">
               <div class="image-wrapper">
@@ -391,6 +478,14 @@ onUnmounted(() => {
                   class="word-image"
                   @error="(e) => { e.target.style.display = 'none'; }"
                 />
+                <button
+                  v-if="debugMode"
+                  class="mark-bad-btn small"
+                  :class="{ marked: isBadImage(getNextWord()?.en) }"
+                  @click.stop="markBadImage(getNextWord()?.en, getNextWord()?.zh, '', '')"
+                >
+                  {{ isBadImage(getNextWord()?.en) ? '✓' : '⚠️' }}
+                </button>
               </div>
               <div class="word-info">
                 <div class="word-en">{{ getNextWord()?.en }}</div>
@@ -400,7 +495,6 @@ onUnmounted(() => {
         </div>
       </main>
       
-      <!-- 播放控制 -->
       <div class="play-controls">
         <button class="control-btn" @click="prevCard">⏮️</button>
         <button class="play-toggle-btn" @click="togglePlay">
@@ -409,6 +503,62 @@ onUnmounted(() => {
         </button>
         <button class="control-btn" @click="nextCard">⏭️</button>
       </div>
+    </div>
+    
+    <!-- 调试页面 - 待审核图片 -->
+    <div v-else-if="currentPage === 'debug'" class="page-content">
+      <header class="page-header">
+        <button class="back-btn" @click="goToHome">
+          <span>← 返回</span>
+        </button>
+        <h1 class="page-title">
+          <span>📝</span>
+          <span>待审核图片</span>
+        </h1>
+        <span class="bad-count">{{ badImages.length }} 个</span>
+      </header>
+      
+      <main class="debug-content">
+        <div v-if="badImages.length === 0" class="empty-state">
+          <span class="empty-icon">✅</span>
+          <p>没有待审核的图片</p>
+          <p class="empty-hint">在调试模式下点击图片右上角的⚠️按钮标记不合适的图片</p>
+        </div>
+        
+        <div v-else class="bad-images-grid">
+          <div
+            v-for="item in badImages"
+            :key="item.en"
+            class="bad-image-card"
+          >
+            <div class="image-wrapper">
+              <img
+                :src="getImageUrl(item)"
+                :alt="item.en"
+                class="word-image"
+                @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.no-image').style.display = 'flex'; }"
+              />
+              <div class="no-image" style="display: none;">
+                <span class="no-image-icon">📝</span>
+                <span class="no-image-text">{{ item.en }}</span>
+              </div>
+            </div>
+            <div class="word-info">
+              <div class="word-en">{{ item.en }}</div>
+              <div class="word-zh">{{ item.zh }}</div>
+              <div class="word-category">{{ item.category }}</div>
+            </div>
+            <div class="action-buttons">
+              <button class="action-btn approve-btn" @click="removeBadImage(item.en)">
+                ✅ 符合
+              </button>
+              <button class="action-btn reject-btn">
+                ❌ 不符合
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
     
     <!-- 底部导航栏 -->
@@ -441,6 +591,20 @@ onUnmounted(() => {
   padding-bottom: env(safe-area-inset-bottom, 0) + 70px;
 }
 
+.debug-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f59e0b;
+  color: white;
+  padding: 4px 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 200;
+}
+
 .page-content {
   flex: 1;
   display: flex;
@@ -456,8 +620,12 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   position: sticky;
-  top: 0;
+  top: 30px;
   z-index: 100;
+}
+
+.debug-mode-on .page-header {
+  top: 42px;
 }
 
 .back-btn {
@@ -489,6 +657,47 @@ onUnmounted(() => {
   font-size: 22px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.debug-toggle-btn {
+  padding: 6px 12px;
+  border: 1px solid #f59e0b;
+  background: #fffbeb;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #d97706;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.debug-toggle-btn:hover {
+  background: #fef3c7;
+}
+
+.bad-images-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #fef2f2;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bad-images-btn:hover {
+  background: #fee2e2;
+}
+
+.bad-count {
+  font-size: 14px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
 .play-btn-header {
   padding: 8px 16px;
   border: none;
@@ -506,13 +715,12 @@ onUnmounted(() => {
   box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
 }
 
-.home-content, .category-content {
+.home-content, .category-content, .debug-content {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
 }
 
-/* 分组和分类网格 */
 .group-grid, .category-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -553,7 +761,6 @@ onUnmounted(() => {
   color: #909399;
 }
 
-/* 单词卡片 */
 .word-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -636,7 +843,52 @@ onUnmounted(() => {
   color: #909399;
 }
 
-/* 播放页面 */
+.word-category {
+  font-size: 10px;
+  color: #a0aec0;
+}
+
+/* 标记按钮 */
+.mark-bad-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.mark-bad-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.mark-bad-btn.marked {
+  background: #dc2626;
+}
+
+.mark-bad-btn.small {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+}
+
+.mark-bad-btn.large {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+
 .play-page {
   padding-bottom: 0;
 }
@@ -715,7 +967,6 @@ onUnmounted(() => {
   font-size: 16px;
 }
 
-/* 播放控制 */
 .play-controls {
   background: white;
   padding: 16px;
@@ -760,7 +1011,89 @@ onUnmounted(() => {
   box-shadow: 0 6px 16px rgba(64, 158, 255, 0.5);
 }
 
-/* 底部导航 */
+/* 调试页面 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 8px 0;
+}
+
+.empty-hint {
+  font-size: 12px !important;
+  color: #94a3b8 !important;
+}
+
+.bad-images-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-bottom: 100px;
+}
+
+.bad-image-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.bad-image-card .image-wrapper {
+  aspect-ratio: 1;
+}
+
+.bad-image-card .word-info {
+  padding: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  padding: 0 10px 10px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.approve-btn {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.approve-btn:hover {
+  background: #bbf7d0;
+}
+
+.reject-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.reject-btn:hover {
+  background: #fecaca;
+}
+
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -799,14 +1132,13 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-/* 响应式 */
 @media (min-width: 500px) {
   .group-grid, .category-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
   
-  .word-grid {
+  .word-grid, .bad-images-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
@@ -818,7 +1150,7 @@ onUnmounted(() => {
     gap: 16px;
   }
   
-  .word-grid {
+  .word-grid, .bad-images-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
