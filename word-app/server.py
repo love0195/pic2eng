@@ -78,10 +78,10 @@ if __name__ == '__main__':
     print("🚀 启动服务器...")
     print(f"📁 图片目录: {IMAGES_DIR}")
     print(f"📝 标记文件: {MARKED_FILE}")
-    print("🌐 访问地址: http://localhost:28765/")
+    print("🌐 访问地址: http://localhost:8000/")
     print()
     
     # 创建必要的目录
     IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     
-    app.run(host='0.0.0.0', port=28765, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
