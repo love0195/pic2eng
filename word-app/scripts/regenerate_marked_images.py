@@ -19,47 +19,47 @@ def get_prompt_for_word(word_en, word_zh, category):
     
     word_clean = word_en.replace("_", " ")
     
-    # 身体部位 - 使用真实照片风格
+    # 身体部位 - 使用卡通/简笔画风格
     if category == "身体部位" or category == "body_parts":
         # 特殊处理手指/脚趾
         if word_en == "finger":
-            return "close-up of human hand with all 5 fingers, palm up, real photograph, natural skin tone, no shoes, no gloves, white background, professional medical photography"
+            return "simple cartoon illustration of human hand with 5 fingers, palm up, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "toe":
-            return "close-up of human foot with all 5 toes, top view, real photograph, natural skin tone, no shoes, no socks, white background, professional medical photography"
+            return "simple cartoon illustration of human foot with 5 toes, top view, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "hand":
-            return "close-up of human hand, palm up, 5 fingers, real photograph, natural skin tone, no shoes, no gloves, white background, professional photography"
+            return "simple cartoon illustration of human hand, palm up, 5 fingers, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "foot":
-            return "close-up of human foot, top view, 5 toes, real photograph, natural skin tone, no shoes, no socks, white background, professional photography"
+            return "simple cartoon illustration of human foot, top view, 5 toes, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "elbow":
-            return "close-up of human elbow, arm bent, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human elbow, arm bent, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "knee":
-            return "close-up of human knee, leg slightly bent, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human knee, leg slightly bent, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "skin":
-            return "close-up of human skin texture, smooth healthy skin, real photograph, natural skin tone, white background, professional skin photography"
+            return "simple cartoon illustration of human skin texture, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "thumb":
-            return "close-up of human thumb, part of hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human thumb, part of hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "index_finger":
-            return "close-up of human index finger pointing, part of hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human index finger pointing, part of hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "middle_finger":
-            return "close-up of human middle finger, part of hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human middle finger, part of hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "ring_finger":
-            return "close-up of human ring finger, part of hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human ring finger, part of hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "little_finger":
-            return "close-up of human little finger (pinky), part of hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human little finger (pinky), part of hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "palm":
-            return "close-up of human palm, hand open, 5 fingers, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human palm, hand open, 5 fingers, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "wrist":
-            return "close-up of human wrist, part of forearm and hand, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human wrist, part of forearm and hand, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "ankle":
-            return "close-up of human ankle, part of leg and foot, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human ankle, part of leg and foot, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "heel":
-            return "close-up of human heel, bottom view of foot, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human heel, bottom view of foot, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "arch":
-            return "close-up of human foot arch, side view of foot, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human foot arch, side view of foot, clean lines, flat design, white background, cute cartoon style"
         elif word_en == "knuckle":
-            return "close-up of human knuckles, closed fist, real photograph, natural skin tone, white background, professional photography"
+            return "simple cartoon illustration of human knuckles, closed fist, clean lines, flat design, white background, cute cartoon style"
         else:
-            return f"close-up of human {word_clean}, real photograph, natural skin tone, no shoes, no accessories, white background, professional photography"
+            return f"simple cartoon illustration of human {word_clean}, clean lines, flat design, white background, cute cartoon style"
     
     # 内脏器官 - 使用医学解剖风格
     if category == "内脏器官" or category == "internal_organs":
