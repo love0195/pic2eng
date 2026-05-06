@@ -21,19 +21,21 @@ const badImages = ref([]);
 
 const groupKeys = computed(() => Object.keys(vocabularyData));
 
-function loadBadImages() {
+async function loadBadImages() {
   try {
-    const saved = localStorage.getItem('badImages');
-    if (saved) {
-      badImages.value = JSON.parse(saved);
+    const response = await fetch('/api/marked-images');
+    const result = await response.json();
+    if (result.success) {
+      badImages.value = result.data;
     }
   } catch (e) {
+    console.error('加载标记失败:', e);
     badImages.value = [];
   }
 }
 
-function saveBadImages() {
-  localStorage.setItem('badImages', JSON.stringify(badImages.value));
+async function saveBadImages() {
+  // 不再使用，通过 API 操作
 }
 
 function getAllCategories() {
@@ -254,23 +256,34 @@ function getCurrentWord() {
   return playWords.value[currentPlayIndex.value];
 }
 
-function markBadImage(word, zh, group, category) {
-  const existing = badImages.value.find(item => item.en === word);
-  if (!existing) {
-    badImages.value.push({
-      en: word,
-      zh: zh,
-      group: group,
-      category: category,
-      markedAt: new Date().toISOString()
+async function markBadImage(word, zh, group, category) {
+  try {
+    const response = await fetch('/api/marked-images', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ en: word, zh, group, category })
     });
-    saveBadImages();
+    const result = await response.json();
+    if (result.success) {
+      badImages.value = result.data;
+    }
+  } catch (e) {
+    console.error('标记失败:', e);
   }
 }
 
-function removeBadImage(word) {
-  badImages.value = badImages.value.filter(item => item.en !== word);
-  saveBadImages();
+async function removeBadImage(word) {
+  try {
+    const response = await fetch(`/api/marked-images/${word}`, {
+      method: 'DELETE'
+    });
+    const result = await response.json();
+    if (result.success) {
+      badImages.value = result.data;
+    }
+  } catch (e) {
+    console.error('取消标记失败:', e);
+  }
 }
 
 function isBadImage(word) {
@@ -551,9 +564,6 @@ onUnmounted(() => {
             <div class="action-buttons">
               <button class="action-btn approve-btn" @click="removeBadImage(item.en)">
                 ✅ 符合
-              </button>
-              <button class="action-btn reject-btn">
-                ❌ 不符合
               </button>
             </div>
           </div>
