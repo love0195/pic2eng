@@ -171,10 +171,16 @@ function startAutoPlay() {
   playNext();
 }
 
+const SVG_WORDS = ['hand', 'finger', 'thumb', 'index_finger', 'middle_finger', 'ring_finger', 'little_finger',
+  'palm', 'knuckle', 'wrist', 'arm', 'elbow', 'foot', 'toe', 'ankle', 'knee', 'hip', 'waist',
+  'calf', 'heel', 'arch', 'skin', 'neck', 'shoulder', 'back', 'chest', 'thigh', 'head', 'spine'];
+
 function getImageUrl(word) {
   const wordEn = typeof word === 'string' ? word : word.en;
-  // 优先使用SVG，如果SVG不存在则使用JPG
-  return `/images/${wordEn}.svg`;
+  if (SVG_WORDS.includes(wordEn)) {
+    return `/images/${wordEn}.svg`;
+  }
+  return `/images/${wordEn}.jpg`;
 }
 
 function getAudioUrl(word) {
