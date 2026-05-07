@@ -172,7 +172,9 @@ function startAutoPlay() {
 }
 
 function getImageUrl(word) {
-  return `/images/${word.en}.jpg`;
+  const wordEn = typeof word === 'string' ? word : word.en;
+  // 优先使用SVG，如果SVG不存在则使用JPG
+  return `/images/${wordEn}.svg`;
 }
 
 function getAudioUrl(word) {
