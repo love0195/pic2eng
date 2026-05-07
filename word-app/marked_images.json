@@ -1,30 +1,9 @@
 [
   {
-    "en": "wrist",
-    "zh": "手腕",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:38Z"
-  },
-  {
     "en": "middle_finger",
     "zh": "中指",
     "group": "身体部位",
     "category": "身体部位",
     "markedAt": "2026-05-06T14:24:03Z"
-  },
-  {
-    "en": "ring_finger",
-    "zh": "无名指",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:04Z"
-  },
-  {
-    "en": "little_finger",
-    "zh": "小指",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:06Z"
   }
 ]
