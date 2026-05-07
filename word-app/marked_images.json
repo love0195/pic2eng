@@ -1,115 +1,10 @@
 [
   {
-    "en": "hand",
-    "zh": "手",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:22:37Z"
-  },
-  {
-    "en": "elbow",
-    "zh": "肘",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:22:38Z"
-  },
-  {
-    "en": "arm",
-    "zh": "手臂",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:22:59Z"
-  },
-  {
-    "en": "finger",
-    "zh": "手指",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:03Z"
-  },
-  {
-    "en": "knee",
-    "zh": "膝盖",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:05Z"
-  },
-  {
-    "en": "foot",
-    "zh": "脚",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:07Z"
-  },
-  {
-    "en": "skin",
-    "zh": "皮肤",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:15Z"
-  },
-  {
-    "en": "waist",
-    "zh": "腰部",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:26Z"
-  },
-  {
-    "en": "hip",
-    "zh": "臀部",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:27Z"
-  },
-  {
-    "en": "calf",
-    "zh": "小腿",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:35Z"
-  },
-  {
-    "en": "ankle",
-    "zh": "脚踝",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:36Z"
-  },
-  {
     "en": "wrist",
     "zh": "手腕",
     "group": "身体部位",
     "category": "身体部位",
     "markedAt": "2026-05-06T14:23:38Z"
-  },
-  {
-    "en": "knuckle",
-    "zh": "指节",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:54Z"
-  },
-  {
-    "en": "palm",
-    "zh": "手掌",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:55Z"
-  },
-  {
-    "en": "thumb",
-    "zh": "拇指",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:23:57Z"
-  },
-  {
-    "en": "index_finger",
-    "zh": "食指",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:01Z"
   },
   {
     "en": "middle_finger",
@@ -126,31 +21,10 @@
     "markedAt": "2026-05-06T14:24:04Z"
   },
   {
-    "en": "toe",
-    "zh": "脚趾",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:05Z"
-  },
-  {
     "en": "little_finger",
     "zh": "小指",
     "group": "身体部位",
     "category": "身体部位",
     "markedAt": "2026-05-06T14:24:06Z"
-  },
-  {
-    "en": "heel",
-    "zh": "脚后跟",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:07Z"
-  },
-  {
-    "en": "arch",
-    "zh": "脚弓",
-    "group": "身体部位",
-    "category": "身体部位",
-    "markedAt": "2026-05-06T14:24:08Z"
   }
 ]

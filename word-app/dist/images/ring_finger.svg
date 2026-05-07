@@ -1,16 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <!-- 背景 -->
   <rect width="200" height="200" fill="#FFFFFF" rx="20" ry="20"/>
-  
-  <!-- 装饰圆形 -->
   <circle cx="100" cy="100" r="80" fill="#FFB6C1" opacity="0.3"/>
-  
-  <!-- Emoji -->
-  <text x="100" y="85" font-size="64" text-anchor="middle" dominant-baseline="middle">💍</text>
-  
-  <!-- 中文 -->
+  <text x="100" y="80" font-size="48" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">🖖</text>
   <text x="100" y="130" font-size="28" font-weight="bold" fill="#333333" text-anchor="middle" font-family="Arial, sans-serif">无名指</text>
-  
-  <!-- 英文 -->
   <text x="100" y="160" font-size="16" fill="#666666" text-anchor="middle" font-family="Arial, sans-serif">Ring Finger</text>
 </svg>
